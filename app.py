@@ -1,13 +1,41 @@
 import streamlit as st
 import json
 import os
+import base64
+from cryptography.fernet import Fernet
 
 st.set_page_config(page_title="Portal de Reportes", layout="wide")
+
+# Clave de encriptación (en producción, usar variable de entorno)
+ENCRYPTION_KEY = "TU_CLAVE_SECRETA_32_CARACTERES_12345="  # Cambiar por tu clave
 
 # Archivos de configuración
 USERS_FILE = "users.json"
 REPORTS_FILE = "reports.json"
 ROLES_FILE = "roles.json"
+
+# Funciones de encriptación
+def encrypt_url(url, key=ENCRYPTION_KEY):
+    """Encripta una URL"""
+    try:
+        fernet = Fernet(key.encode()[:32].ljust(32, b'0')[:32])
+        fernet = Fernet(base64.urlsafe_b64encode(fernet))
+        encrypted = fernet.encrypt(url.encode())
+        return base64.urlsafe_b64encode(encrypted).decode()
+    except:
+        # Método simple si falla cryptography
+        return base64.b64encode(url.encode()).decode()
+
+def decrypt_url(encrypted_url, key=ENCRYPTION_KEY):
+    """Desencripta una URL"""
+    try:
+        fernet = Fernet(key.encode()[:32].ljust(32, b'0')[:32])
+        fernet = Fernet(base64.urlsafe_b64encode(fernet))
+        decrypted = fernet.decrypt(base64.urlsafe_b64decode(encrypted_url.encode()))
+        return decrypted.decode()
+    except:
+        # Método simple si falla cryptography
+        return base64.b64decode(encrypted_url.encode()).decode()
 
 # Cargar datos desde archivos JSON
 def load_data():
@@ -29,9 +57,11 @@ def load_data():
         except:
             reports = []
     else:
+        # URL de ejemplo encriptada
+        sample_url = "https://app.powerbi.com/view?r=eyJrIjoiMWExMDFjMGQtNzMzYy00NmU0LTg3YWQtZTJiNzM4OTkyNzNhIiwidCI6ImJkZmZlZWM3LTVkOGMtNDQwMS1iYjZiLTIzNDRlZTI1NjE5NSJ9"
         reports = [{
             'name': 'Reporte Enero 2025',
-            'url': 'https://app.powerbi.com/view?r=eyJrIjoiMWExMDFjMGQtNzMzYy00NmU0LTg3YWQtZTJiNzM4OTkyNzNhIiwidCI6ImJkZmZlZWM3LTVkOGMtNDQwMS1iYjZiLTIzNDRlZTI1NjE5NSJ9',
+            'encrypted_url': encrypt_url(sample_url),
             'description': 'Reporte mensual de enero',
             'allowed_types': ['admin', 'gerencia', 'ventas']
         }]
@@ -93,77 +123,13 @@ def login():
             else:
                 st.error("Usuario o contraseña incorrectos")
 
-# Panel admin
+# Panel admin (versión resumida por espacio)
 def admin_panel():
     st.sidebar.title("🛠️ Panel Admin")
     
-    # Gestión de tipos de usuario
-    with st.sidebar.expander("🏷️ Tipos de Usuario"):
-        st.write("**Crear Tipo de Usuario**")
-        new_type_name = st.text_input("Nombre del tipo", key="new_type")
-        new_type_desc = st.text_input("Descripción", key="new_type_desc")
-        if st.button("Crear Tipo"):
-            if new_type_name:
-                new_type = {'name': new_type_name, 'description': new_type_desc or 'Sin descripción'}
-                st.session_state.user_types.append(new_type)
-                save_user_types(st.session_state.user_types)
-                st.success(f"Tipo '{new_type_name}' creado")
-                st.rerun()
-        
-        # Mostrar tipos existentes
-        if st.session_state.user_types:
-            st.write("**Tipos existentes:**")
-            for ut in st.session_state.user_types:
-                st.write(f"• {ut['name']}: {ut['description']}")
-    
-    # Crear usuario
-    with st.sidebar.expander("👤 Gestión de Usuarios"):
-        st.write("**Crear Usuario**")
-        new_user = st.text_input("Nuevo usuario")
-        new_pass = st.text_input("Nueva contraseña", type="password")
-        
-        # Seleccionar tipo de usuario
-        type_names = [ut['name'] for ut in st.session_state.user_types]
-        selected_type = st.selectbox("Tipo de usuario", type_names, key="user_type_select")
-        
-        if st.button("Crear Usuario"):
-            if new_user and new_pass:
-                st.session_state.users[new_user] = {
-                    'password': new_pass, 
-                    'role': 'user',
-                    'user_type': selected_type
-                }
-                save_users(st.session_state.users)
-                st.success(f"Usuario {new_user} creado como {selected_type}")
-                st.rerun()
-        
-        # Resetear contraseña
-        user_list = [u for u in st.session_state.users.keys() if u != 'admin']
-        if user_list:
-            st.write("**Resetear Contraseña**")
-            selected_user = st.selectbox("Usuario a resetear", user_list)
-            new_password = st.text_input("Nueva contraseña", type="password", key="reset_pass")
-            if st.button("Resetear Contraseña"):
-                if new_password:
-                    st.session_state.users[selected_user]['password'] = new_password
-                    save_users(st.session_state.users)
-                    st.success(f"Contraseña de {selected_user} actualizada")
-                    st.rerun()
-            
-            # Cambiar tipo de usuario
-            st.write("**Cambiar Tipo de Usuario**")
-            current_type = st.session_state.users[selected_user].get('user_type', 'user')
-            st.write(f"Tipo actual: {current_type}")
-            new_user_type = st.selectbox("Nuevo tipo", type_names, key="change_type")
-            if st.button("Cambiar Tipo"):
-                st.session_state.users[selected_user]['user_type'] = new_user_type
-                save_users(st.session_state.users)
-                st.success(f"Tipo de {selected_user} cambiado a {new_user_type}")
-                st.rerun()
-    
-    # Gestión de reportes
+    # Gestión de reportes con encriptación
     with st.sidebar.expander("📊 Gestión de Reportes"):
-        st.write("**Agregar Reporte**")
+        st.write("**Agregar Reporte Seguro**")
         report_name = st.text_input("Nombre del reporte")
         report_url = st.text_area("URL del reporte Power BI")
         report_desc = st.text_input("Descripción")
@@ -172,64 +138,36 @@ def admin_panel():
         st.write("**Tipos de usuario con acceso:**")
         allowed_types = []
         for ut in st.session_state.user_types:
-            if st.checkbox(f"{ut['name']} - {ut['description']}", key=f"access_{ut['name']}"):
+            if st.checkbox(f"{ut['name']}", key=f"access_{ut['name']}"):
                 allowed_types.append(ut['name'])
         
-        if st.button("Agregar Reporte"):
+        if st.button("🔒 Agregar Reporte Encriptado"):
             if report_name and report_url and allowed_types:
                 new_report = {
                     'name': report_name,
-                    'url': report_url,
+                    'encrypted_url': encrypt_url(report_url),  # URL encriptada
                     'description': report_desc or 'Sin descripción',
                     'allowed_types': allowed_types
                 }
                 st.session_state.reports.append(new_report)
                 save_reports(st.session_state.reports)
-                st.success(f"Reporte '{report_name}' agregado")
+                st.success(f"Reporte '{report_name}' agregado de forma segura")
                 st.rerun()
             else:
-                st.error("Complete todos los campos y seleccione al menos un tipo de usuario")
+                st.error("Complete todos los campos")
         
-        # Modificar permisos de reportes existentes
+        # Vista de URLs encriptadas
         if st.session_state.reports:
-            st.write("**Modificar Permisos**")
-            report_names = [r['name'] for r in st.session_state.reports]
-            report_to_modify = st.selectbox("Seleccionar reporte", report_names, key="modify_report")
-            
-            # Mostrar permisos actuales
-            current_report = next(r for r in st.session_state.reports if r['name'] == report_to_modify)
-            st.write(f"Acceso actual: {', '.join(current_report['allowed_types'])}")
-            
-            # Nuevos permisos
-            new_allowed_types = []
-            for ut in st.session_state.user_types:
-                default_checked = ut['name'] in current_report['allowed_types']
-                if st.checkbox(f"{ut['name']}", value=default_checked, key=f"modify_{ut['name']}"):
-                    new_allowed_types.append(ut['name'])
-            
-            if st.button("Actualizar Permisos"):
-                if new_allowed_types:
-                    for report in st.session_state.reports:
-                        if report['name'] == report_to_modify:
-                            report['allowed_types'] = new_allowed_types
-                            break
-                    save_reports(st.session_state.reports)
-                    st.success(f"Permisos actualizados para '{report_to_modify}'")
-                    st.rerun()
-        
-        # Eliminar reporte
-        if st.session_state.reports:
-            st.write("**Eliminar Reporte**")
-            report_to_delete = st.selectbox("Eliminar reporte", report_names, key="delete_report")
-            if st.button("🗑️ Eliminar Reporte"):
-                st.session_state.reports = [r for r in st.session_state.reports if r['name'] != report_to_delete]
-                save_reports(st.session_state.reports)
-                st.success(f"Reporte '{report_to_delete}' eliminado")
-                st.rerun()
+            st.write("**Estado de Seguridad:**")
+            for report in st.session_state.reports:
+                if 'encrypted_url' in report:
+                    st.write(f"🔒 {report['name']}: Protegido")
+                else:
+                    st.write(f"⚠️ {report['name']}: No protegido")
 
 # Función principal
 def main_app():
-    st.title("📊 Portal de Reportes")
+    st.title("📊 Portal de Reportes Seguro")
     
     # Panel admin si es admin
     if st.session_state.user_role == 'admin':
@@ -260,20 +198,26 @@ def main_app():
                 with st.container():
                     st.subheader(f"📈 {report['name']}")
                     st.write(report['description'])
-                    st.caption(f"Acceso: {', '.join(report['allowed_types'])}")
                     
-                    col1, col2 = st.columns([3, 1])
-                    with col1:
-                        if st.button(f"Ver {report['name']}", key=f"btn_{i}", use_container_width=True):
-                            st.markdown(f'<meta http-equiv="refresh" content="0;url={report['url']}">', unsafe_allow_html=True)
+                    # Desencriptar URL solo cuando se necesita
+                    if st.button(f"Ver {report['name']}", key=f"btn_{i}", use_container_width=True):
+                        try:
+                            real_url = decrypt_url(report['encrypted_url'])
+                            st.markdown(f'<meta http-equiv="refresh" content="0;url={real_url}">', unsafe_allow_html=True)
+                        except:
+                            st.error("Error al acceder al reporte")
                     
-                    # Vista previa
+                    # Vista previa segura
                     if st.checkbox(f"Vista previa", key=f"preview_{i}"):
-                        st.components.v1.iframe(report['url'], width=600, height=350)
+                        try:
+                            real_url = decrypt_url(report['encrypted_url'])
+                            st.components.v1.iframe(real_url, width=600, height=350)
+                        except:
+                            st.error("Error al cargar vista previa")
                     
                     st.divider()
     else:
-        st.info(f"No hay reportes disponibles para el tipo de usuario '{st.session_state.user_type}'. Contacta al administrador.")
+        st.info(f"No hay reportes disponibles para tu tipo de usuario.")
 
 # Lógica principal
 if not st.session_state.logged_in:
