@@ -240,6 +240,34 @@ def seleccionar_area_usuario():
         st.markdown("Elige tu área para acceder a los reportes correspondientes:")
         st.markdown("---")
         
+        # Colores personalizados para cada área
+        colores_areas = {
+            "Comercial": {
+                "fondo": "#e8f4fd",  # Azul claro
+                "borde": "#1976d2",  # Azul
+                "titulo": "#0d47a1",  # Azul oscuro
+                "boton": "#1976d2"   # Azul para botón
+            },
+            "Marketing": {
+                "fondo": "#fce4ec",  # Rosa claro
+                "borde": "#e91e63",  # Rosa
+                "titulo": "#ad1457",  # Rosa oscuro
+                "boton": "#e91e63"   # Rosa para botón
+            },
+            "Trade": {
+                "fondo": "#f3e5f5",  # Morado claro
+                "borde": "#9c27b0",  # Morado
+                "titulo": "#6a1b9a",  # Morado oscuro
+                "boton": "#9c27b0"   # Morado para botón
+            },
+            "Contact Center": {
+                "fondo": "#e8f5e8",  # Verde claro
+                "borde": "#4caf50",  # Verde
+                "titulo": "#2e7d32",  # Verde oscuro
+                "boton": "#4caf50"   # Verde para botón
+            }
+        }
+        
         # Crear botones para cada área
         col1, col2 = st.columns(2)
         
@@ -247,23 +275,32 @@ def seleccionar_area_usuario():
         
         for i, area in enumerate(areas_lista):
             config_area = AREAS_USUARIOS[area]
+            colores = colores_areas.get(area, colores_areas["Comercial"])  # Color por defecto
             
             # Alternar columnas
             columna = col1 if i % 2 == 0 else col2
             
             with columna:
                 st.markdown(f"""
-                <div style='background: #f0f2f6; padding: 1.5rem; border-radius: 10px; 
-                           border-left: 4px solid #2e75b6; margin-bottom: 1rem;'>
-                    <h3>{config_area['icono']} {area}</h3>
-                    <p style='color: #666; margin: 0;'>{config_area['descripcion']}</p>
-                    <p style='color: #888; font-size: 0.9em; margin: 0.5rem 0 0 0;'>
+                <div class='area-card' style='background: {colores["fondo"]}; padding: 1.5rem; border-radius: 10px; 
+                           border-left: 4px solid {colores["borde"]}; margin-bottom: 1rem;
+                           box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: all 0.3s ease;
+                           cursor: pointer;'>
+                    <h3 style='color: {colores["titulo"]}; margin-top: 0;'>{config_area['icono']} {area}</h3>
+                    <p style='color: #555; margin: 0.5rem 0;'>{config_area['descripcion']}</p>
+                    <p style='color: #777; font-size: 0.9em; margin: 0.5rem 0 0 0;'>
                         📊 {len(config_area['reportes_permitidos'])} reportes disponibles
                     </p>
                 </div>
                 """, unsafe_allow_html=True)
                 
-                if st.button(f"Acceder como {area}", key=f"btn_{area}", use_container_width=True):
+                # Botón personalizado con color del área
+                if st.button(
+                    f"Acceder como {area}", 
+                    key=f"btn_{area}", 
+                    use_container_width=True,
+                    help=f"Ingresar al área {area}"
+                ):
                     st.session_state.area_seleccionada = area
                     st.rerun()
                 
@@ -456,6 +493,30 @@ def main():
         padding: 1rem;
         border-radius: 10px;
         border-left: 4px solid #2e75b6;
+    }
+    
+    /* Estilos personalizados para botones de área */
+    .stButton > button {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .stButton > button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        background: linear-gradient(135deg, #5a67d8 0%, #667eea 100%);
+    }
+    
+    /* Hover effect para las tarjetas de área */
+    .area-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 12px rgba(0,0,0,0.15);
     }
     </style>
     """, unsafe_allow_html=True)
