@@ -42,10 +42,13 @@ def desencriptar_url(url_encriptada, clave_fernet):
 # ✅ URLs ENCRIPTADAS - SEGURO ESTAR EN GITHUB PÚBLICO
 # Reemplaza estas URLs con las que genere tu script de encriptación
 URLS_ENCRIPTADAS = {
-    "dashboard_ventas": "Z0FBQUFBQm9TNDgtaXpZXzVoYWxyYXpPMkZxcWc3anQzNmF3YnhxX2xjdXJVR3JUaGtzUXNyTldQV1EyMlF5N3VHc0lSNGU3VlZxWmY5d29ycFRzNmhnUzRKdmwtTG1BSm9qQTJsWFNjbGw2eTA0ZG12bzRaVUVRcDdFRlo2RDFadHZuelV5MkdqZllTNXdUYUNqX3d2RHJZOTVJYllaaHNQRzdldEpETGNPcUs3OG9NRFF6MTNiYjg1Vy1LODVab1U2aDV2QkhSM1BxeDJHbHhvTVByLUJ0b0FHS0NRV0gyQkNRUUFqTnNFWlFFc0piT1RuaVFraWRQQkprWVpqRVRuUGhqLUhtdjVRTXNZZm1Lc0Zub2xELTFCZmlsb3FlclE9PQ==",
+    "dashboard_ventas": "gAAAAABh_ejemplo_url_encriptada_1_aqui",
     "analisis_financiero": "gAAAAABh_ejemplo_url_encriptada_2_aqui", 
     "kpis_operativos": "gAAAAABh_ejemplo_url_encriptada_3_aqui",
-    "reporte_ejecutivo": "gAAAAABh_ejemplo_url_encriptada_4_aqui"
+    "reporte_ejecutivo": "gAAAAABh_ejemplo_url_encriptada_4_aqui",
+    "metricas_marketing": "gAAAAABh_ejemplo_url_encriptada_5_aqui",
+    "analisis_trade": "gAAAAABh_ejemplo_url_encriptada_6_aqui",
+    "dashboard_contact_center": "gAAAAABh_ejemplo_url_encriptada_7_aqui"
 }
 
 # Títulos amigables para los reportes
@@ -53,7 +56,10 @@ TITULOS_REPORTES = {
     "dashboard_ventas": "📈 Dashboard de Ventas",
     "analisis_financiero": "💰 Análisis Financiero", 
     "kpis_operativos": "🎯 KPIs Operativos",
-    "reporte_ejecutivo": "👔 Reporte Ejecutivo"
+    "reporte_ejecutivo": "👔 Reporte Ejecutivo",
+    "metricas_marketing": "📢 Métricas de Marketing",
+    "analisis_trade": "🏪 Análisis Trade",
+    "dashboard_contact_center": "📞 Dashboard Contact Center"
 }
 
 # Descripciones de los reportes
@@ -61,7 +67,34 @@ DESCRIPCIONES_REPORTES = {
     "dashboard_ventas": "Métricas de ventas, tendencias y análisis de performance",
     "analisis_financiero": "Estados financieros, flujo de caja y análisis de rentabilidad",
     "kpis_operativos": "Indicadores clave de rendimiento operativo",
-    "reporte_ejecutivo": "Resumen ejecutivo con métricas consolidadas"
+    "reporte_ejecutivo": "Resumen ejecutivo con métricas consolidadas",
+    "metricas_marketing": "Campañas, ROI, métricas digitales y análisis de marketing",
+    "analisis_trade": "Análisis de canales, trade marketing y punto de venta",
+    "dashboard_contact_center": "Métricas de atención al cliente y contact center"
+}
+
+# 👥 CONFIGURACIÓN DE USUARIOS POR ÁREA
+AREAS_USUARIOS = {
+    "Comercial": {
+        "icono": "💼",
+        "descripcion": "Área Comercial y Ventas",
+        "reportes_permitidos": ["dashboard_ventas", "analisis_financiero", "kpis_operativos", "reporte_ejecutivo"]
+    },
+    "Marketing": {
+        "icono": "📢",
+        "descripcion": "Área de Marketing y Comunicaciones",
+        "reportes_permitidos": ["metricas_marketing", "dashboard_ventas", "kpis_operativos", "reporte_ejecutivo"]
+    },
+    "Trade": {
+        "icono": "🏪",
+        "descripcion": "Área de Trade Marketing",
+        "reportes_permitidos": ["analisis_trade", "dashboard_ventas", "kpis_operativos"]
+    },
+    "Contact Center": {
+        "icono": "📞",
+        "descripcion": "Área de Contact Center",
+        "reportes_permitidos": ["dashboard_contact_center", "kpis_operativos"]
+    }
 }
 
 def obtener_clave_desencriptacion():
@@ -96,23 +129,95 @@ def obtener_clave_desencriptacion():
         st.error("No se pudo acceder a la configuración de encriptación")
         st.stop()
 
+def seleccionar_area_usuario():
+    """Permite al usuario seleccionar su área de trabajo"""
+    if 'area_seleccionada' not in st.session_state:
+        st.session_state.area_seleccionada = None
+    
+    # Si no hay área seleccionada, mostrar pantalla de selección
+    if st.session_state.area_seleccionada is None:
+        st.title("🏢 Portal de Reportes Power BI")
+        st.markdown("### 👥 Selecciona tu Área de Trabajo")
+        st.markdown("Elige tu área para acceder a los reportes correspondientes:")
+        st.markdown("---")
+        
+        # Crear botones para cada área
+        col1, col2 = st.columns(2)
+        
+        areas_lista = list(AREAS_USUARIOS.keys())
+        
+        for i, area in enumerate(areas_lista):
+            config_area = AREAS_USUARIOS[area]
+            
+            # Alternar columnas
+            columna = col1 if i % 2 == 0 else col2
+            
+            with columna:
+                st.markdown(f"""
+                <div style='background: #f0f2f6; padding: 1.5rem; border-radius: 10px; 
+                           border-left: 4px solid #2e75b6; margin-bottom: 1rem;'>
+                    <h3>{config_area['icono']} {area}</h3>
+                    <p style='color: #666; margin: 0;'>{config_area['descripcion']}</p>
+                    <p style='color: #888; font-size: 0.9em; margin: 0.5rem 0 0 0;'>
+                        📊 {len(config_area['reportes_permitidos'])} reportes disponibles
+                    </p>
+                </div>
+                """, unsafe_allow_html=True)
+                
+                if st.button(f"Acceder como {area}", key=f"btn_{area}", use_container_width=True):
+                    st.session_state.area_seleccionada = area
+                    st.rerun()
+                
+                st.markdown("<br>", unsafe_allow_html=True)
+        
+        # Información adicional
+        st.markdown("---")
+        st.info("🔒 **Acceso Controlado:** Solo verás los reportes autorizados para tu área de trabajo")
+        return False
+    
+    return True
+
+def obtener_reportes_por_area(area):
+    """Obtiene los reportes permitidos para un área específica"""
+    if area not in AREAS_USUARIOS:
+        return {}
+    
+    reportes_permitidos = AREAS_USUARIOS[area]["reportes_permitidos"]
+    reportes_filtrados = {}
+    
+    for reporte_key in reportes_permitidos:
+        if reporte_key in URLS_ENCRIPTADAS:
+            reportes_filtrados[reporte_key] = URLS_ENCRIPTADAS[reporte_key]
+    
+    return reportes_filtrados
+
 def mostrar_reporte_individual():
     """Muestra un reporte seleccionado individualmente"""
     
-    st.title("🏢 Portal de Reportes Power BI")
-    st.markdown("Accede a todos los reportes de Business Intelligence de forma segura")
+    area_actual = st.session_state.area_seleccionada
+    config_area = AREAS_USUARIOS[area_actual]
+    
+    st.title(f"{config_area['icono']} Portal {area_actual}")
+    st.markdown(f"**{config_area['descripcion']}** - Accede a tus reportes autorizados")
     st.markdown("---")
+    
+    # Obtener reportes permitidos para el área
+    reportes_area = obtener_reportes_por_area(area_actual)
+    
+    if not reportes_area:
+        st.warning(f"⚠️ No hay reportes configurados para el área {area_actual}")
+        return
     
     # Obtener clave de desencriptación
     clave_fernet = obtener_clave_desencriptacion()
     
     # Sidebar para selección de reporte
     st.sidebar.title("📋 Seleccionar Reporte")
-    st.sidebar.markdown("Elige el reporte que deseas visualizar:")
+    st.sidebar.markdown("Reportes disponibles para tu área:")
     
     reporte_seleccionado = st.sidebar.selectbox(
         "📊 Reportes disponibles:",
-        options=list(URLS_ENCRIPTADAS.keys()),
+        options=list(reportes_area.keys()),
         format_func=lambda x: TITULOS_REPORTES.get(x, x),
         index=0
     )
@@ -122,6 +227,12 @@ def mostrar_reporte_individual():
     st.sidebar.subheader("⚙️ Configuración")
     altura_iframe = st.sidebar.slider("📏 Altura del reporte", 400, 1200, 700, 50)
     
+    # Botón para cambiar de área
+    st.sidebar.markdown("---")
+    if st.sidebar.button("🔄 Cambiar Área", use_container_width=True):
+        st.session_state.area_seleccionada = None
+        st.rerun()
+    
     # Información del reporte seleccionado
     col1, col2 = st.columns([3, 1])
     
@@ -130,10 +241,10 @@ def mostrar_reporte_individual():
         st.markdown(f"*{DESCRIPCIONES_REPORTES.get(reporte_seleccionado, 'Reporte de Power BI')}*")
     
     with col2:
-        st.metric("📊 Reportes", len(URLS_ENCRIPTADAS))
+        st.metric("📊 Reportes", len(reportes_area))
     
     # Desencriptar la URL seleccionada
-    url_encriptada = URLS_ENCRIPTADAS[reporte_seleccionado]
+    url_encriptada = reportes_area[reporte_seleccionado]
     
     with st.spinner("🔓 Desencriptando y cargando reporte..."):
         url_desencriptada = desencriptar_url(url_encriptada, clave_fernet)
@@ -151,28 +262,32 @@ def mostrar_reporte_individual():
                 scrolling=True
             )
         
-        # Botones de acción
-        col1, col2, col3 = st.columns([1, 1, 2])
-        
-        with col1:
-            if st.button("🔄 Actualizar"):
-                st.rerun()
-        
+        # Botón de actualizar
+        col1, col2, col3 = st.columns([1, 3, 1])
         with col2:
-            if st.button("🔗 Nueva Pestaña"):
-                st.markdown(f'<a href="{url_desencriptada}" target="_blank">🔗 Abrir en nueva pestaña</a>', 
-                           unsafe_allow_html=True)
+            if st.button("🔄 Actualizar Reporte", use_container_width=True):
+                st.rerun()
     
     else:
         st.error("❌ **No se pudo cargar el reporte**")
         st.error("Verifica que la configuración de encriptación sea correcta")
 
 def mostrar_multiples_reportes():
-    """Muestra todos los reportes en pestañas"""
+    """Muestra todos los reportes permitidos en pestañas"""
     
-    st.title("📊 Panel de Reportes Completo")
-    st.markdown("Visualiza todos los reportes Power BI en un solo lugar")
+    area_actual = st.session_state.area_seleccionada
+    config_area = AREAS_USUARIOS[area_actual]
+    
+    st.title(f"{config_area['icono']} Panel Completo - {area_actual}")
+    st.markdown(f"**{config_area['descripcion']}** - Todos tus reportes en un solo lugar")
     st.markdown("---")
+    
+    # Obtener reportes permitidos para el área
+    reportes_area = obtener_reportes_por_area(area_actual)
+    
+    if not reportes_area:
+        st.warning(f"⚠️ No hay reportes configurados para el área {area_actual}")
+        return
     
     # Obtener clave de desencriptación
     clave_fernet = obtener_clave_desencriptacion()
@@ -180,12 +295,18 @@ def mostrar_multiples_reportes():
     # Configuración de altura
     altura_iframe = st.sidebar.slider("📏 Altura de reportes", 400, 1000, 600, 50)
     
-    # Crear pestañas para cada reporte
-    tab_names = [TITULOS_REPORTES.get(k, k) for k in URLS_ENCRIPTADAS.keys()]
+    # Botón para cambiar de área
+    st.sidebar.markdown("---")
+    if st.sidebar.button("🔄 Cambiar Área", use_container_width=True):
+        st.session_state.area_seleccionada = None
+        st.rerun()
+    
+    # Crear pestañas para cada reporte permitido
+    tab_names = [TITULOS_REPORTES.get(k, k) for k in reportes_area.keys()]
     tabs = st.tabs(tab_names)
     
     # Mostrar cada reporte en su pestaña correspondiente
-    for i, (reporte_key, url_encriptada) in enumerate(URLS_ENCRIPTADAS.items()):
+    for i, (reporte_key, url_encriptada) in enumerate(reportes_area.items()):
         with tabs[i]:
             st.markdown(f"**{DESCRIPCIONES_REPORTES.get(reporte_key, '')}**")
             
@@ -224,8 +345,19 @@ def main():
     </style>
     """, unsafe_allow_html=True)
     
+    # Verificar si el usuario ha seleccionado su área
+    if not seleccionar_area_usuario():
+        return
+    
+    # Una vez seleccionada el área, mostrar la navegación
+    area_actual = st.session_state.area_seleccionada
+    config_area = AREAS_USUARIOS[area_actual]
+    
     # Sidebar para navegación
     st.sidebar.title("🚀 Navegación")
+    st.sidebar.markdown(f"**Usuario:** {config_area['icono']} {area_actual}")
+    st.sidebar.markdown("---")
+    
     modo_visualizacion = st.sidebar.radio(
         "Selecciona el modo de visualización:",
         ["📊 Reporte Individual", "📋 Todos los Reportes"],
@@ -235,7 +367,8 @@ def main():
     # Información del sistema
     st.sidebar.markdown("---")
     st.sidebar.markdown("### ℹ️ Información")
-    st.sidebar.info(f"📊 **Reportes disponibles:** {len(URLS_ENCRIPTADAS)}")
+    reportes_disponibles = len(AREAS_USUARIOS[area_actual]["reportes_permitidos"])
+    st.sidebar.info(f"📊 **Reportes disponibles:** {reportes_disponibles}")
     st.sidebar.success("🔒 **Conexión segura:** Activada")
     
     # Mostrar el modo seleccionado
@@ -246,10 +379,10 @@ def main():
     
     # Footer
     st.markdown("---")
-    st.markdown("""
+    st.markdown(f"""
     <div style='text-align: center; color: #666; padding: 1rem;'>
-        🔒 <strong>Portal Seguro Power BI</strong> • Desarrollado con Streamlit<br>
-        <small>Todos los reportes están protegidos con encriptación avanzada</small>
+        🔒 <strong>Portal Seguro Power BI</strong> • {config_area['icono']} Área: {area_actual}<br>
+        <small>Acceso controlado por área • Reportes protegidos con encriptación avanzada</small>
     </div>
     """, unsafe_allow_html=True)
 
