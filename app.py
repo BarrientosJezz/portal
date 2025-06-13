@@ -28,13 +28,13 @@ def crear_clave_desde_password(password, salt):
     return key
 
 def desencriptar_url(url_encriptada, clave_fernet):
-    """Desencripta una URL usando la clave proporcionada"""
+    """Desencripta una URL usando la clave proporcionada - CORREGIDO"""
     try:
         f = Fernet(clave_fernet)
-        # Decodificar la URL encriptada
-        url_encriptada_bytes = base64.urlsafe_b64decode(url_encriptada.encode('utf-8'))
-        # Desencriptar
-        url_bytes = f.decrypt(url_encriptada_bytes)
+        # ✅ CORRECCIÓN: NO aplicar base64decode adicional
+        # Fernet ya maneja el formato correcto internamente
+        # Trabajar directamente con el token de Fernet (formato gAAAAAB...)
+        url_bytes = f.decrypt(url_encriptada.encode('utf-8'))
         return url_bytes.decode('utf-8')
     except Exception as e:
         st.error(f"❌ Error al desencriptar URL: {str(e)}")
