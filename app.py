@@ -28,17 +28,50 @@ def crear_clave_desde_password(password, salt):
     return key
 
 def desencriptar_url(url_encriptada, clave_fernet):
-    """Desencripta una URL usando la clave proporcionada - CORREGIDO"""
+    """Desencripta una URL usando la clave proporcionada - VERSIÓN CORREGIDA"""
     try:
         f = Fernet(clave_fernet)
-        # ✅ CORRECCIÓN: NO aplicar base64decode adicional
-        # Fernet ya maneja el formato correcto internamente
-        # Trabajar directamente con el token de Fernet (formato gAAAAAB...)
+        # ✅ CORRECCIÓN: Trabajar directamente con el token de Fernet
+        # NO aplicar base64decode - Fernet ya maneja esto internamente
         url_bytes = f.decrypt(url_encriptada.encode('utf-8'))
         return url_bytes.decode('utf-8')
     except Exception as e:
+        # Agregar más detalles del error para debugging
         st.error(f"❌ Error al desencriptar URL: {str(e)}")
+        st.error(f"🔍 Detalles: Tipo de error: {type(e).__name__}")
+        st.error(f"🔍 Token recibido: {url_encriptada[:20]}...")
         return None
+
+def debug_desencriptacion():
+    """Función de debugging para verificar la configuración"""
+    st.sidebar.markdown("---")
+    st.sidebar.markdown("### 🔧 Debug Info")
+    
+    try:
+        # Verificar secrets
+        password = st.secrets.get("PASSWORD", "NO_ENCONTRADO")
+        salt = st.secrets.get("SALT", "NO_ENCONTRADO")
+        
+        st.sidebar.text(f"PASSWORD: {'✅' if password != 'NO_ENCONTRADO' else '❌'}")
+        st.sidebar.text(f"SALT: {'✅' if salt != 'NO_ENCONTRADO' else '❌'}")
+        
+        # Verificar si los valores coinciden con los esperados
+        password_correcto = password == "powerbi_encrypt_pass_2024"
+        salt_correcto = salt == "powerbi_encrypt_salt_2024"
+        
+        st.sidebar.text(f"Pass Match: {'✅' if password_correcto else '❌'}")
+        st.sidebar.text(f"Salt Match: {'✅' if salt_correcto else '❌'}")
+        
+        if not password_correcto:
+            st.sidebar.error(f"❌ PASSWORD esperado: powerbi_encrypt_pass_2024")
+            st.sidebar.error(f"PASSWORD actual: {password}")
+        
+        if not salt_correcto:
+            st.sidebar.error(f"❌ SALT esperado: powerbi_encrypt_salt_2024")  
+            st.sidebar.error(f"SALT actual: {salt}")
+            
+    except Exception as e:
+        st.sidebar.error(f"Error en debug: {str(e)}")
 
 # ✅ URLs ENCRIPTADAS - SEGURO ESTAR EN GITHUB PÚBLICO
 # Reemplaza estas URLs con las que genere tu script de encriptación
@@ -546,6 +579,9 @@ def main():
     reportes_disponibles = len(AREAS_USUARIOS[area_actual]["reportes_permitidos"])
     st.sidebar.info(f"📊 **Reportes disponibles:** {reportes_disponibles}")
     st.sidebar.success("🔒 **Conexión segura:** Activada")
+    
+    # AGREGAR ESTA LÍNEA PARA DEBUG
+    debug_desencriptacion()
     
     # Mostrar el modo seleccionado
     if modo_visualizacion == "📊 Reporte Individual":
