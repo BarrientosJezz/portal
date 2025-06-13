@@ -43,7 +43,7 @@ def desencriptar_url(url_encriptada, clave_fernet):
 # ✅ URLs ENCRIPTADAS - SEGURO ESTAR EN GITHUB PÚBLICO
 # Reemplaza estas URLs con las que genere tu script de encriptación
 URLS_ENCRIPTADAS = {
-    "dashboard_ventas": "gAAAAABoS63dCcYW7Nq-I9DXPP16ewvg1qETfRIuVYUxS1WFWDxv_OKWE8Gf-7oPCqaNuwGpQyflbr2T2BudJYTae2-fZl_nr7bsbD_ccYKaD0ygpU7bR7qZBPjHBAMmJvgqxoboo7g9T1byUzHFv5NSPCFKohfhszpWL3CjoeQu7gwN1Rm1N_aWLqssSe5PlWx4DowjLfQGDglqM9tCe1PCdi5k-T6dPFNV1nEKfjPc5TGYMAWlfdqJ8vAufnOBy2Vmb_hxrJFFslruqF_tnDA5Cfk77PR_Eg==",
+    "dashboard_ventas": "Z0FBQUFBQm9TNDgtaXpZXzVoYWxyYXpPMkZxcWc3anQzNmF3YnhxX2xjdXJVR3JUaGtzUXNyTldQV1EyMlF5N3VHc0lSNGU3VlZxWmY5d29ycFRzNmhnUzRKdmwtTG1BSm9qQTJsWFNjbGw2eTA0ZG12bzRaVUVRcDdFRlo2RDFadHZuelV5MkdqZllTNXdUYUNqX3d2RHJZOTVJYllaaHNQRzdldEpETGNPcUs3OG9NRFF6MTNiYjg1Vy1LODVab1U2aDV2QkhSM1BxeDJHbHhvTVByLUJ0b0FHS0NRV0gyQkNRUUFqTnNFWlFFc0piT1RuaVFraWRQQkprWVpqRVRuUGhqLUhtdjVRTXNZZm1Lc0Zub2xELTFCZmlsb3FlclE9PQ==",
     "analisis_financiero": "gAAAAABh_ejemplo_url_encriptada_2_aqui", 
     "kpis_operativos": "gAAAAABh_ejemplo_url_encriptada_3_aqui",
     "reporte_ejecutivo": "gAAAAABh_ejemplo_url_encriptada_4_aqui",
