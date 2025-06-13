@@ -3,228 +3,144 @@ import base64
 from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
-import traceback
 
-st.set_page_config(page_title="Portal Power BI - Debug", page_icon="🔍", layout="wide")
+st.set_page_config(page_title="Portal Power BI", page_icon="📊", layout="wide")
 
 def crear_clave(password, salt):
-    """Crea una clave de encriptación usando PBKDF2"""
+    kdf = PBKDF2HMAC(algorithm=hashes.SHA256(), length=32, salt=salt.encode(), iterations=100000)
+    return base64.urlsafe_b64encode(kdf.derive(password.encode()))
+
+def desencriptar_url(url_encriptada, clave):
     try:
-        st.write(f"🔍 Creando clave con password: '{password}' y salt: '{salt}'")
-        kdf = PBKDF2HMAC(
-            algorithm=hashes.SHA256(),
-            length=32,
-            salt=salt.encode('utf-8'),
-            iterations=100000
-        )
-        clave_bytes = kdf.derive(password.encode('utf-8'))
-        clave_b64 = base64.urlsafe_b64encode(clave_bytes)
-        st.write(f"🔍 Clave generada: {clave_b64}")
-        return clave_b64
+        f = Fernet(clave)
+        url_bytes = base64.urlsafe_b64decode(url_encriptada.encode())
+        return f.decrypt(url_bytes).decode()
     except Exception as e:
-        st.error(f"❌ Error creando clave: {e}")
-        st.write(traceback.format_exc())
+        st.error(f"❌ Error desencriptación: {e}")
         return None
 
-def test_encriptacion_simple():
-    """Test básico de encriptación/desencriptación"""
-    st.header("🧪 Test de Encriptación Básico")
-    
-    # Parámetros de prueba
-    password_test = "test123"
-    salt_test = "salt123"
-    url_test = "https://www.google.com"
-    
-    st.write(f"**Parámetros de prueba:**")
-    st.write(f"- Password: {password_test}")
-    st.write(f"- Salt: {salt_test}")
-    st.write(f"- URL: {url_test}")
-    
-    try:
-        # Step 1: Crear clave
-        st.subheader("Paso 1: Crear Clave")
-        clave = crear_clave(password_test, salt_test)
-        if not clave:
-            st.error("❌ Falló creación de clave")
-            return
-        
-        # Step 2: Encriptar
-        st.subheader("Paso 2: Encriptar URL")
-        f = Fernet(clave)
-        url_encriptada_bytes = f.encrypt(url_test.encode('utf-8'))
-        url_encriptada_b64 = base64.urlsafe_b64encode(url_encriptada_bytes).decode('utf-8')
-        st.write(f"🔍 URL encriptada: {url_encriptada_b64}")
-        
-        # Step 3: Desencriptar
-        st.subheader("Paso 3: Desencriptar URL")
-        url_encriptada_bytes_decoded = base64.urlsafe_b64decode(url_encriptada_b64.encode('utf-8'))
-        url_desencriptada = f.decrypt(url_encriptada_bytes_decoded).decode('utf-8')
-        st.write(f"🔍 URL desencriptada: {url_desencriptada}")
-        
-        # Verificar
-        if url_desencriptada == url_test:
-            st.success("✅ Test básico EXITOSO")
-            return url_encriptada_b64
-        else:
-            st.error("❌ Test básico FALLÓ")
-            
-    except Exception as e:
-        st.error(f"❌ Error en test básico: {e}")
-        st.code(traceback.format_exc())
-    
-    return None
+# Configuración simplificada
+URLS_ENCRIPTADAS = {
+    "dashboard_ventas": "gAAAAABoS63dCcYW7Nq-I9DXPP16ewvg1qETfRIuVYUxS1WFWDxv_OKWE8Gf-7oPCqaNuwGpQyflbr2T2BudJYTae2-fZl_nr7bsbD_ccYKaD0ygpU7bR7qZBPjHBAMmJvgqxoboo7g9T1byUzHFv5NSPCFKohfhszpWL3CjoeQu7gwN1Rm1N_aWLqssSe5PlWx4DowjLfQGDglqM9tCe1PCdi5k-T6dPFNV1nEKfjPc5TGYMAWlfdqJ8vAufnOBy2Vmb_hxrJFFslruqF_tnDA5Cfk77PR_Eg==",
+    "analisis_financiero": "URL_2_AQUI",
+    "kpis_operativos": "URL_3_AQUI"
+}
 
-def test_url_original():
-    """Test con la URL encriptada original del código"""
-    st.header("🔬 Test con URL Original")
-    
-    url_original = "gAAAAABoS6gIgq_tP2hti2I7nU2hfUPw00DU0rWUmsUtT8ES5DVslx0DwWPdI4OOgzTD9hS2rwObVxSu8s40InWSjBRzypk_5-ASHwLOMLLw-gX_jP3pmTokaFG6Ghty0IqyK839vOtz1l3MEncolHI7gMFDYLg13BXKw5Fatj-3yYHGtQeR7JcXvECtJ6UhSpcsoKX-ahQj6ISUogWq8EcHHnbXPS9wrxgQfd2BVZugn03sHi7QLur8HZlmHk5XEfdUnI6l-lQdl3Fyf9kxCTB2hiDTIGPUow=="
-    
-    st.write(f"**URL encriptada original:**")
-    st.code(url_original)
-    st.write(f"**Longitud:** {len(url_original)} caracteres")
-    
-    # Probar con diferentes combinaciones de password/salt
-    combinaciones = [
-        ("test_password", "test_salt"),
-        ("comercial123", "test_salt"),
-        ("test123", "salt123"),
-        ("", ""),
-        ("admin", "portal"),
-        ("powerbi", "dashboard")
-    ]
-    
-    for i, (pwd, salt) in enumerate(combinaciones):
-        if not pwd or not salt:
-            continue
-            
-        st.subheader(f"Intento {i+1}: pwd='{pwd}', salt='{salt}'")
-        
-        try:
-            clave = crear_clave(pwd, salt)
-            if clave:
-                f = Fernet(clave)
-                url_bytes = base64.urlsafe_b64decode(url_original.encode('utf-8'))
-                url_desencriptada = f.decrypt(url_bytes).decode('utf-8')
-                st.success(f"✅ ÉXITO: {url_desencriptada}")
-                return
-        except Exception as e:
-            st.warning(f"❌ Falló: {str(e)}")
-    
-    st.error("❌ Ninguna combinación funcionó")
+TITULOS = {
+    "dashboard_ventas": "📈 Dashboard Ventas",
+    "analisis_financiero": "💰 Análisis Financiero",
+    "kpis_operativos": "🎯 KPIs Operativos"
+}
 
-def interfaz_manual():
-    """Interfaz para pruebas manuales"""
-    st.header("🛠️ Pruebas Manuales")
-    
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        st.subheader("Parámetros")
-        password = st.text_input("Password:", value="test_password")
+AREAS = {
+    "Comercial": {
+        "icono": "💼",
+        "reportes": ["dashboard_ventas", "analisis_financiero"],
+        "password": "comercial123"
+    },
+    "Marketing": {
+        "icono": "📢", 
+        "reportes": ["dashboard_ventas", "kpis_operativos"],
+        "password": "marketing123"
+    }
+}
+
+def obtener_clave():
+    # Modo desarrollo - reemplaza con st.secrets en producción
+    if st.checkbox("🔧 Modo desarrollo"):
+        password = st.text_input("Password:", value="test_password", type="password")
         salt = st.text_input("Salt:", value="test_salt")
-        
-    with col2:
-        st.subheader("URL")
-        url_input = st.text_area(
-            "URL encriptada:", 
-            value="gAAAAABoS6gIgq_tP2hti2I7nU2hfUPw00DU0rWUmsUtT8ES5DVslx0DwWPdI4OOgzTD9hS2rwObVxSu8s40InWSjBRzypk_5-ASHwLOMLLw-gX_jP3pmTokaFG6Ghty0IqyK839vOtz1l3MEncolHI7gMFDYLg13BXKw5Fatj-3yYHGtQeR7JcXvECtJ6UhSpcsoKX-ahQj6ISUogWq8EcHHnbXPS9wrxgQfd2BVZugn03sHi7QLur8HZlmHk5XEfdUnI6l-lQdl3Fyf9kxCTB2hiDTIGPUow==",
-            height=100
-        )
+        if password and salt:
+            return crear_clave(password, salt)
     
-    if st.button("🚀 Probar Desencriptación"):
-        if password and salt and url_input:
-            try:
-                st.write("**Proceso paso a paso:**")
-                
-                # Crear clave
-                st.write("1. Creando clave...")
-                clave = crear_clave(password, salt)
-                if not clave:
-                    st.error("Falló crear clave")
-                    return
-                
-                # Crear Fernet
-                st.write("2. Creando objeto Fernet...")
-                f = Fernet(clave)
-                st.success("✅ Fernet creado")
-                
-                # Decodificar base64
-                st.write("3. Decodificando base64...")
-                url_bytes = base64.urlsafe_b64decode(url_input.strip().encode('utf-8'))
-                st.success(f"✅ Decodificado: {len(url_bytes)} bytes")
-                
-                # Desencriptar
-                st.write("4. Desencriptando...")
-                url_desencriptada = f.decrypt(url_bytes).decode('utf-8')
-                
-                st.success("🎉 ÉXITO!")
-                st.write(f"**URL desencriptada:** {url_desencriptada}")
-                
-                # Mostrar iframe si es URL válida
-                if url_desencriptada.startswith(('http://', 'https://')):
-                    st.write("**Vista previa:**")
-                    st.components.v1.iframe(src=url_desencriptada, height=400)
-                
-            except Exception as e:
-                st.error(f"❌ Error: {str(e)}")
-                st.write("**Detalle del error:**")
-                st.code(traceback.format_exc())
-        else:
-            st.warning("⚠️ Completa todos los campos")
+    # Producción
+    if "PASSWORD" in st.secrets and "SALT" in st.secrets:
+        return crear_clave(st.secrets["PASSWORD"], st.secrets["SALT"])
+    
+    st.error("❌ Configura PASSWORD y SALT en Streamlit Secrets")
+    st.stop()
 
 def main():
-    st.title("🔍 Diagnóstico Portal Power BI")
-    st.markdown("---")
+    # Inicializar sesión
+    if 'area' not in st.session_state:
+        st.session_state.area = None
+    if 'autenticado' not in st.session_state:
+        st.session_state.autenticado = False
+
+    # Selección de área
+    if not st.session_state.area:
+        st.title("🏢 Portal Power BI")
+        st.markdown("### Selecciona tu área:")
+        
+        col1, col2 = st.columns(2)
+        for i, (area, config) in enumerate(AREAS.items()):
+            with col1 if i % 2 == 0 else col2:
+                if st.button(f"{config['icono']} {area}", key=area, use_container_width=True):
+                    st.session_state.area = area
+                    st.rerun()
+        return
+
+    # Login
+    area_actual = st.session_state.area
+    if not st.session_state.autenticado:
+        config = AREAS[area_actual]
+        st.title(f"{config['icono']} Acceso {area_actual}")
+        
+        with st.form("login"):
+            password = st.text_input("Contraseña:", type="password")
+            if st.form_submit_button("🚀 Acceder"):
+                if password == config["password"]:
+                    st.session_state.autenticado = True
+                    st.success("✅ Acceso concedido")
+                    st.rerun()
+                else:
+                    st.error("❌ Contraseña incorrecta")
+        
+        if st.button("⬅️ Cambiar área"):
+            st.session_state.area = None
+            st.rerun()
+        return
+
+    # Portal principal
+    config = AREAS[area_actual]
+    st.title(f"{config['icono']} Portal {area_actual}")
     
-    # Información del sistema
-    st.sidebar.header("📊 Info del Sistema")
-    try:
-        import cryptography
-        st.sidebar.success(f"✅ Cryptography: {cryptography.__version__}")
-    except:
-        st.sidebar.error("❌ Cryptography no disponible")
-    
-    # Menú principal
-    opcion = st.sidebar.selectbox(
-        "Selecciona una opción:",
-        [
-            "🧪 Test Básico",
-            "🔬 Test URL Original", 
-            "🛠️ Pruebas Manuales",
-            "📋 Portal Original"
-        ]
+    # Sidebar
+    st.sidebar.title("📋 Reportes")
+    reporte = st.sidebar.selectbox(
+        "Seleccionar:",
+        config["reportes"],
+        format_func=lambda x: TITULOS.get(x, x)
     )
     
-    if opcion == "🧪 Test Básico":
-        url_test = test_encriptacion_simple()
-        if url_test:
-            st.info(f"💡 Usa esta URL encriptada para tus pruebas: {url_test}")
+    altura = st.sidebar.slider("Altura:", 400, 1000, 600)
     
-    elif opcion == "🔬 Test URL Original":
-        test_url_original()
+    if st.sidebar.button("🚪 Cerrar sesión"):
+        st.session_state.autenticado = False
+        st.session_state.area = None
+        st.rerun()
+
+    # Mostrar reporte
+    st.subheader(TITULOS.get(reporte, reporte))
     
-    elif opcion == "🛠️ Pruebas Manuales":
-        interfaz_manual()
-    
-    elif opcion == "📋 Portal Original":
-        st.info("🚧 Implementa aquí tu portal original una vez que funcione la desencriptación")
+    # Obtener y desencriptar URL
+    clave = obtener_clave()
+    if clave and reporte in URLS_ENCRIPTADAS:
+        with st.spinner("🔓 Cargando..."):
+            url = desencriptar_url(URLS_ENCRIPTADAS[reporte], clave)
         
-        # Portal básico simplificado
-        password = st.text_input("Password de prueba:", value="test_password", type="password")
-        salt = st.text_input("Salt de prueba:", value="test_salt")
-        
-        if password and salt:
-            # Usar URL generada del test básico
-            url_encriptada = "gAAAAABnC8XhvW_9Z0K1wKjYOHp6qgX5Z7lJ4gHrKlmNOPsABcDEFGHI"  # Ejemplo
-            
-            try:
-                clave = crear_clave(password, salt)
-                if clave:
-                    st.success("✅ Clave creada correctamente")
-                    st.write("Listo para usar en tu portal!")
-            except Exception as e:
-                st.error(f"❌ Error: {e}")
+        if url:
+            st.components.v1.iframe(src=url, height=altura, scrolling=True)
+        else:
+            st.error("❌ No se pudo cargar el reporte")
+            with st.expander("💡 Soluciones"):
+                st.markdown("""
+                1. Verifica PASSWORD y SALT en secrets
+                2. Regenera URLs encriptadas
+                3. Usa modo desarrollo para testing
+                """)
+    else:
+        st.warning("⚠️ Reporte no disponible")
 
 if __name__ == "__main__":
     main()
