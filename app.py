@@ -1,5 +1,6 @@
 import streamlit as st
 import base64
+import time
 from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
@@ -78,22 +79,26 @@ AREAS_USUARIOS = {
     "Comercial": {
         "icono": "💼",
         "descripcion": "Área Comercial y Ventas",
-        "reportes_permitidos": ["dashboard_ventas", "analisis_financiero", "kpis_operativos", "reporte_ejecutivo"]
+        "reportes_permitidos": ["dashboard_ventas", "analisis_financiero", "kpis_operativos", "reporte_ejecutivo"],
+        "password_key": "PASSWORD_COMERCIAL"
     },
     "Marketing": {
         "icono": "📢",
         "descripcion": "Área de Marketing y Comunicaciones",
-        "reportes_permitidos": ["metricas_marketing", "dashboard_ventas", "kpis_operativos", "reporte_ejecutivo"]
+        "reportes_permitidos": ["metricas_marketing", "dashboard_ventas", "kpis_operativos", "reporte_ejecutivo"],
+        "password_key": "PASSWORD_MARKETING"
     },
     "Trade": {
         "icono": "🏪",
         "descripcion": "Área de Trade Marketing",
-        "reportes_permitidos": ["analisis_trade", "dashboard_ventas", "kpis_operativos"]
+        "reportes_permitidos": ["analisis_trade", "dashboard_ventas", "kpis_operativos"],
+        "password_key": "PASSWORD_TRADE"
     },
     "Contact Center": {
         "icono": "📞",
         "descripcion": "Área de Contact Center",
-        "reportes_permitidos": ["dashboard_contact_center", "kpis_operativos"]
+        "reportes_permitidos": ["dashboard_contact_center", "kpis_operativos"],
+        "password_key": "PASSWORD_CONTACT_CENTER"
     }
 }
 
@@ -129,7 +134,99 @@ def obtener_clave_desencriptacion():
         st.error("No se pudo acceder a la configuración de encriptación")
         st.stop()
 
-def seleccionar_area_usuario():
+def verificar_password_area(area, password_ingresado):
+    """
+    Verifica la contraseña para un área específica
+    """
+    try:
+        config_area = AREAS_USUARIOS[area]
+        password_key = config_area["password_key"]
+        
+        # Verificar si existe la contraseña en secrets
+        if password_key not in st.secrets:
+            st.error(f"❌ **Error de Configuración**")
+            st.error(f"No se encontró {password_key} en la configuración segura.")
+            st.info("📋 **Para administradores**: Configura las contraseñas de área en Streamlit Secrets")
+            return False
+        
+        # Obtener contraseña desde secrets
+        password_correcto = st.secrets[password_key]
+        
+        # Verificar contraseña
+        return password_ingresado == password_correcto
+        
+    except Exception as e:
+        st.error(f"❌ **Error de Autenticación**: {str(e)}")
+        return False
+
+def mostrar_pantalla_login(area):
+    """
+    Muestra la pantalla de login para un área específica
+    """
+    config_area = AREAS_USUARIOS[area]
+    
+    st.markdown(f"""
+    <div style='text-align: center; padding: 2rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                color: white; border-radius: 15px; margin-bottom: 2rem;'>
+        <h1>{config_area['icono']} Acceso {area}</h1>
+        <p style='font-size: 1.2em; margin: 0;'>{config_area['descripcion']}</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Formulario de login
+    with st.form(key=f"login_form_{area}"):
+        st.markdown("### 🔐 Ingresa tu Contraseña")
+        st.markdown(f"Introduce la contraseña para acceder al área **{area}**:")
+        
+        password = st.text_input(
+            "Contraseña:",
+            type="password",
+            placeholder="Ingresa la contraseña del área...",
+            key=f"password_{area}"
+        )
+        
+        col1, col2, col3 = st.columns([1, 2, 1])
+        with col2:
+            submit_button = st.form_submit_button(
+                f"🚀 Acceder a {area}",
+                use_container_width=True
+            )
+        
+        if submit_button:
+            if password:
+                if verificar_password_area(area, password):
+                    # Autenticación exitosa
+                    st.session_state[f"authenticated_{area}"] = True
+                    st.success(f"✅ **Acceso concedido a {area}**")
+                    st.balloons()
+                    time.sleep(1)  # Pequeña pausa para mostrar el mensaje
+                    st.rerun()
+                else:
+                    # Contraseña incorrecta
+                    st.error("❌ **Contraseña incorrecta**")
+                    st.error("Verifica la contraseña e inténtalo nuevamente")
+            else:
+                st.warning("⚠️ **Por favor ingresa una contraseña**")
+    
+    # Botón para regresar
+    st.markdown("---")
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        if st.button("⬅️ Regresar a Selección de Área", use_container_width=True):
+            st.session_state.area_seleccionada = None
+            st.rerun()
+    
+    # Información adicional
+    st.markdown("---")
+    st.info(f"🔒 **Seguridad**: El acceso al área {area} está protegido por contraseña")
+    st.markdown(f"""
+    <div style='background: #f8f9fa; padding: 1rem; border-radius: 8px; border-left: 4px solid #17a2b8;'>
+        <strong>📊 Reportes disponibles en {area}:</strong><br>
+        • {len(config_area['reportes_permitidos'])} reportes autorizados<br>
+        • Acceso seguro y controlado<br>
+        • Datos protegidos con encriptación
+    </div>
+    """, unsafe_allow_html=True)
     """Permite al usuario seleccionar su área de trabajo"""
     if 'area_seleccionada' not in st.session_state:
         st.session_state.area_seleccionada = None
@@ -231,6 +328,24 @@ def mostrar_reporte_individual():
     st.sidebar.markdown("---")
     if st.sidebar.button("🔄 Cambiar Área", use_container_width=True):
         st.session_state.area_seleccionada = None
+        st.rerun()
+    
+    # Botón para cerrar sesión del área actual
+    if st.sidebar.button("🚪 Cerrar Sesión", use_container_width=True):
+        # Limpiar autenticación del área actual
+        if f"authenticated_{area_actual}" in st.session_state:
+            del st.session_state[f"authenticated_{area_actual}"]
+        st.session_state.area_seleccionada = None
+        st.success(f"✅ Sesión cerrada para {area_actual}")
+        st.rerun()
+    
+    # Botón para cerrar sesión del área actual
+    if st.sidebar.button("🚪 Cerrar Sesión", use_container_width=True):
+        # Limpiar autenticación del área actual
+        if f"authenticated_{area_actual}" in st.session_state:
+            del st.session_state[f"authenticated_{area_actual}"]
+        st.session_state.area_seleccionada = None
+        st.success(f"✅ Sesión cerrada para {area_actual}")
         st.rerun()
     
     # Información del reporte seleccionado
