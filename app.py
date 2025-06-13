@@ -227,6 +227,8 @@ def mostrar_pantalla_login(area):
         • Datos protegidos con encriptación
     </div>
     """, unsafe_allow_html=True)
+
+def seleccionar_area_usuario():
     """Permite al usuario seleccionar su área de trabajo"""
     if 'area_seleccionada' not in st.session_state:
         st.session_state.area_seleccionada = None
@@ -270,6 +272,13 @@ def mostrar_pantalla_login(area):
         # Información adicional
         st.markdown("---")
         st.info("🔒 **Acceso Controlado:** Solo verás los reportes autorizados para tu área de trabajo")
+        return False
+    
+    # Verificar si el usuario está autenticado para el área seleccionada
+    area_actual = st.session_state.area_seleccionada
+    if f"authenticated_{area_actual}" not in st.session_state or not st.session_state[f"authenticated_{area_actual}"]:
+        # Mostrar pantalla de login
+        mostrar_pantalla_login(area_actual)
         return False
     
     return True
@@ -328,15 +337,6 @@ def mostrar_reporte_individual():
     st.sidebar.markdown("---")
     if st.sidebar.button("🔄 Cambiar Área", use_container_width=True):
         st.session_state.area_seleccionada = None
-        st.rerun()
-    
-    # Botón para cerrar sesión del área actual
-    if st.sidebar.button("🚪 Cerrar Sesión", use_container_width=True):
-        # Limpiar autenticación del área actual
-        if f"authenticated_{area_actual}" in st.session_state:
-            del st.session_state[f"authenticated_{area_actual}"]
-        st.session_state.area_seleccionada = None
-        st.success(f"✅ Sesión cerrada para {area_actual}")
         st.rerun()
     
     # Botón para cerrar sesión del área actual
