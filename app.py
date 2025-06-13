@@ -12,23 +12,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-def crear_clave_desde_password(password):
-    """
-    Crea una clave de encriptación determinística desde un password
-    Usando el mismo método que el archivo de encriptación original
-    """
-    # Mismo salt que se usa en la encriptación
-    salt = b'powerbi_encrypt_salt_2024'
-    
-    kdf = PBKDF2HMAC(
-        algorithm=hashes.SHA256(),
-        length=32,
-        salt=salt,
-        iterations=100000,
-    )
-    
-    key = base64.urlsafe_b64encode(kdf.derive(password.encode()))
-    return key
+
 
 def desencriptar_url(url_encriptada, clave_fernet):
     """Desencripta una URL usando la clave proporcionada"""
@@ -46,7 +30,7 @@ def desencriptar_url(url_encriptada, clave_fernet):
 # ✅ URLs ENCRIPTADAS - SEGURO ESTAR EN GITHUB PÚBLICO
 # Reemplaza estas URLs con las que genere tu script de encriptación
 URLS_ENCRIPTADAS = {
-    "dashboard_ventas": "gAAAAABh_ejemplo_url_encriptada_1_aqui",
+    "dashboard_ventas": "Z0FBQUFBQm9TNDgtaXpZXzVoYWxyYXpPMkZxcWc3anQzNmF3YnhxX2xjdXJVR3JUaGtzUXNyTldQV1EyMlF5N3VHc0lSNGU3VlZxWmY5d29ycFRzNmhnUzRKdmwtTG1BSm9qQTJsWFNjbGw2eTA0ZG12bzRaVUVRcDdFRlo2RDFadHZuelV5MkdqZllTNXdUYUNqX3d2RHJZOTVJYllaaHNQRzdldEpETGNPcUs3OG9NRFF6MTNiYjg1Vy1LODVab1U2aDV2QkhSM1BxeDJHbHhvTVByLUJ0b0FHS0NRV0gyQkNRUUFqTnNFWlFFc0piT1RuaVFraWRQQkprWVpqRVRuUGhqLUhtdjVRTXNZZm1Lc0Zub2xELTFCZmlsb3FlclE9PQ==",
     "analisis_financiero": "gAAAAABh_ejemplo_url_encriptada_2_aqui", 
     "kpis_operativos": "gAAAAABh_ejemplo_url_encriptada_3_aqui",
     "reporte_ejecutivo": "gAAAAABh_ejemplo_url_encriptada_4_aqui"
