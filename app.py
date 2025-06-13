@@ -12,7 +12,19 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-
+def crear_clave_desde_password(password, salt):
+    """
+    Crea una clave de encriptación determinística desde un password y salt
+    """
+    kdf = PBKDF2HMAC(
+        algorithm=hashes.SHA256(),
+        length=32,
+        salt=salt.encode('utf-8'),  # Convertir el salt a bytes
+        iterations=100000,
+    )
+    
+    key = base64.urlsafe_b64encode(kdf.derive(password.encode()))
+    return key
 
 def desencriptar_url(url_encriptada, clave_fernet):
     """Desencripta una URL usando la clave proporcionada"""
@@ -30,7 +42,7 @@ def desencriptar_url(url_encriptada, clave_fernet):
 # ✅ URLs ENCRIPTADAS - SEGURO ESTAR EN GITHUB PÚBLICO
 # Reemplaza estas URLs con las que genere tu script de encriptación
 URLS_ENCRIPTADAS = {
-    "dashboard_ventas": "Z0FBQUFBQm9TNDgtaXpZXzVoYWxyYXpPMkZxcWc3anQzNmF3YnhxX2xjdXJVR3JUaGtzUXNyTldQV1EyMlF5N3VHc0lSNGU3VlZxWmY5d29ycFRzNmhnUzRKdmwtTG1BSm9qQTJsWFNjbGw2eTA0ZG12bzRaVUVRcDdFRlo2RDFadHZuelV5MkdqZllTNXdUYUNqX3d2RHJZOTVJYllaaHNQRzdldEpETGNPcUs3OG9NRFF6MTNiYjg1Vy1LODVab1U2aDV2QkhSM1BxeDJHbHhvTVByLUJ0b0FHS0NRV0gyQkNRUUFqTnNFWlFFc0piT1RuaVFraWRQQkprWVpqRVRuUGhqLUhtdjVRTXNZZm1Lc0Zub2xELTFCZmlsb3FlclE9PQ==",
+    "dashboard_ventas": "gAAAAABh_ejemplo_url_encriptada_1_aqui",
     "analisis_financiero": "gAAAAABh_ejemplo_url_encriptada_2_aqui", 
     "kpis_operativos": "gAAAAABh_ejemplo_url_encriptada_3_aqui",
     "reporte_ejecutivo": "gAAAAABh_ejemplo_url_encriptada_4_aqui"
@@ -58,16 +70,25 @@ def obtener_clave_desencriptacion():
     ❌ NUNCA desde el código público de GitHub
     """
     try:
-        # Verificar si existe la configuración en secrets
+        # Verificar si existen las configuraciones necesarias en secrets
         if "PASSWORD" not in st.secrets:
             st.error("❌ **Error de Configuración**")
-            st.error("No se encontró la clave de desencriptación en la configuración segura.")
+            st.error("No se encontró PASSWORD en la configuración segura.")
             st.info("📋 **Para administradores**: Configura PASSWORD en Streamlit Secrets")
             st.stop()
         
-        # Obtener password desde secrets y generar clave
+        if "SALT" not in st.secrets:
+            st.error("❌ **Error de Configuración**")
+            st.error("No se encontró SALT en la configuración segura.")
+            st.info("📋 **Para administradores**: Configura SALT en Streamlit Secrets")
+            st.stop()
+        
+        # Obtener password y salt desde secrets
         password = st.secrets["PASSWORD"]
-        clave_fernet = crear_clave_desde_password(password)
+        salt = st.secrets["SALT"]
+        
+        # Generar clave de encriptación
+        clave_fernet = crear_clave_desde_password(password, salt)
         return clave_fernet
         
     except Exception as e:
