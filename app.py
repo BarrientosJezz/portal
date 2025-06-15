@@ -163,6 +163,75 @@ AREAS_USUARIOS = {
     }
 }
 
+def mostrar_pantalla_seleccion_area():
+    """Muestra la pantalla inicial de selección de área"""
+    # Header principal
+    st.markdown("""
+    <div style='text-align: center; padding: 2rem; background: linear-gradient(135deg, #1f4e79 0%, #2e75b6 100%); 
+                color: white; border-radius: 15px; margin-bottom: 2rem;'>
+        <h1>📊 Portal Power BI Corporativo</h1>
+        <p style='font-size: 1.2em; margin: 0;'>Acceso Seguro por Área de Trabajo</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("### 🏢 Selecciona tu Área de Trabajo")
+    st.markdown("Elige el área para acceder a los reportes correspondientes:")
+    st.markdown("---")
+    
+    # Crear columnas para las áreas
+    areas = list(AREAS_USUARIOS.keys())
+    
+    # Dividir en columnas según el número de áreas
+    if len(areas) <= 2:
+        cols = st.columns(len(areas))
+    else:
+        cols = st.columns(2)  # Máximo 2 columnas
+    
+    # Mostrar cada área como una tarjeta
+    for i, area in enumerate(areas):
+        config_area = AREAS_USUARIOS[area]
+        
+        # Determinar la columna
+        col_index = i % len(cols)
+        
+        with cols[col_index]:
+            # Tarjeta del área
+            st.markdown(f"""
+            <div class='area-card' style='background: #f8f9fa; padding: 1.5rem; border-radius: 10px; 
+                       border-left: 4px solid #2e75b6; margin-bottom: 1rem;
+                       box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: all 0.3s ease;'>
+                <h3 style='color: #1976D2; margin-top: 0;'>{config_area['icono']} {area}</h3>
+                <p style='color: #555; margin: 0.5rem 0;'>{config_area['descripcion']}</p>
+                <p style='color: #777; font-size: 0.9em; margin: 0.5rem 0 0 0;'>
+                    📊 {len(config_area['reportes_permitidos'])} reportes disponibles
+                </p>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            # Botón para seleccionar área
+            if st.button(
+                f"Acceder a {area}", 
+                key=f"btn_area_{area}", 
+                use_container_width=True,
+                help=f"Ingresar al área {area}"
+            ):
+                st.session_state.area_seleccionada = area
+                st.rerun()
+    
+    # Información adicional
+    st.markdown("---")
+    st.info("🔒 **Acceso Seguro**: Cada área tiene contraseñas específicas y reportes autorizados")
+    
+    # Estadísticas
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.metric("🏢 Áreas", len(AREAS_USUARIOS))
+    with col2:
+        total_reportes = len(URLS_ENCRIPTADAS)
+        st.metric("📊 Reportes", total_reportes)
+    with col3:
+        st.metric("🔒 Encriptación", "AES-256")
+
 def mostrar_seleccion_region(area):
     """
     Muestra la pantalla de selección de región para áreas que lo requieren
@@ -399,7 +468,7 @@ def seleccionar_area_usuario():
     
     # Si no hay área seleccionada, mostrar pantalla de selección
     if st.session_state.area_seleccionada is None:
-        # ... (código existente para mostrar selección de área)
+        mostrar_pantalla_seleccion_area()
         return False
     
     area_actual = st.session_state.area_seleccionada
@@ -431,7 +500,6 @@ def seleccionar_area_usuario():
     
     return True
 
-
 def obtener_reportes_por_area(area, region=None):
     """Obtiene los reportes permitidos para un área específica y región"""
     if area not in AREAS_USUARIOS:
@@ -458,18 +526,29 @@ def obtener_reportes_por_area(area, region=None):
     
     return reportes_filtrados
 
+
 def mostrar_reporte_individual():
     """Muestra un reporte seleccionado individualmente"""
     
     area_actual = st.session_state.area_seleccionada
     config_area = AREAS_USUARIOS[area_actual]
     
-    st.title(f"{config_area['icono']} Portal {area_actual}")
+    # Obtener región si aplica
+    region_actual = None
+    if config_area.get("requiere_region", False):
+        region_actual = st.session_state.get(f"region_seleccionada_{area_actual}")
+    
+    # Título con región si aplica
+    titulo = f"{config_area['icono']} Portal {area_actual}"
+    if region_actual:
+        titulo += f" - {region_actual}"
+    
+    st.title(titulo)
     st.markdown(f"**{config_area['descripcion']}** - Accede a tus reportes autorizados")
     st.markdown("---")
     
-    # Obtener reportes permitidos para el área
-    reportes_area = obtener_reportes_por_area(area_actual)
+    # Obtener reportes permitidos para el área y región
+    reportes_area = obtener_reportes_por_area(area_actual, region_actual)
     
     if not reportes_area:
         st.warning(f"⚠️ No hay reportes configurados para el área {area_actual}")
@@ -498,13 +577,18 @@ def mostrar_reporte_individual():
     st.sidebar.markdown("---")
     if st.sidebar.button("🔄 Cambiar Área", use_container_width=True):
         st.session_state.area_seleccionada = None
+        # Limpiar datos de región si existen
+        for key in list(st.session_state.keys()):
+            if key.startswith("region_seleccionada_") or key.startswith("authenticated_"):
+                del st.session_state[key]
         st.rerun()
     
     # Botón para cerrar sesión del área actual
     if st.sidebar.button("🚪 Cerrar Sesión", use_container_width=True):
         # Limpiar autenticación del área actual
-        if f"authenticated_{area_actual}" in st.session_state:
-            del st.session_state[f"authenticated_{area_actual}"]
+        for key in list(st.session_state.keys()):
+            if key.startswith(f"authenticated_{area_actual}"):
+                del st.session_state[key]
         st.session_state.area_seleccionada = None
         st.success(f"✅ Sesión cerrada para {area_actual}")
         st.rerun()
@@ -547,7 +631,7 @@ def mostrar_reporte_individual():
     else:
         st.error("❌ **No se pudo cargar el reporte**")
         st.error("Verifica que la configuración de encriptación sea correcta")
-
+        
 def mostrar_multiples_reportes():
     """Muestra todos los reportes permitidos en pestañas"""
     
