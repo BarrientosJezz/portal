@@ -436,7 +436,7 @@ def mostrar_pantalla_login(area, region=None):
                     success_msg += "**"
                     
                     st.success(success_msg)
-                    mostrar_toast_notification("✅ Acceso Concedido")
+                    mostrar_spinner_personalizado()
                     time.sleep(1)
                     st.rerun()
                 else:
@@ -684,7 +684,7 @@ def mostrar_multiples_reportes():
 
 # ========== OPCIÓN 1: NIEVE (st.snow()) ==========
 # Reemplaza st.balloons() con:
-st.snow()
+#st.snow()
 
 # ========== OPCIÓN 2: ANIMACIONES CSS PERSONALIZADAS ==========
 def mostrar_animacion_success():
@@ -905,6 +905,7 @@ def verificar_password_area_con_animacion(area, password_ingresado, region=None)
 # st.snow()  # Más elegante para entorno corporativo
 # mostrar_animacion_success()  # Animación personalizada
 # mostrar_toast_notification("✅ Acceso Concedido")  # Notificación moderna
+
 def main():
     """Función principal de la aplicación"""
     
