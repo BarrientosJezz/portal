@@ -872,7 +872,7 @@ def verificar_password_area_con_animacion(area, password_ingresado, region=None)
         
         if password_ingresado == password_correcto:
             # OPCIÓN 1: Nieve
-            st.snow()
+            #st.snow()
             
             # OPCIÓN 2: Animación CSS personalizada
             # mostrar_animacion_success()
