@@ -113,27 +113,125 @@ AREAS_USUARIOS = {
         "icono": "💼",
         "descripcion": "Área Comercial y Ventas",
         "reportes_permitidos": ["dashboard_ventas", "analisis_financiero", "kpis_operativos", "reporte_ejecutivo"],
-        "password_key": "PASSWORD_COMERCIAL"
+        "password_key": "PASSWORD_COMERCIAL",
+        "requiere_region": False  # ← NUEVO: No requiere selección de región
     },
     "Marketing": {
         "icono": "📢",
         "descripcion": "Área de Marketing y Comunicaciones",
         "reportes_permitidos": ["metricas_marketing", "dashboard_ventas", "kpis_operativos", "reporte_ejecutivo"],
-        "password_key": "PASSWORD_MARKETING"
+        "password_key": "PASSWORD_MARKETING",
+        "requiere_region": True,  # ← NUEVO: Requiere selección de región
+        "regiones": {
+            "Bolivia": {
+                "icono": "🇧🇴",
+                "password_key": "PASSWORD_MARKETING_BOLIVIA",
+                "reportes_permitidos": ["metricas_marketing", "dashboard_ventas", "kpis_operativos", "reporte_ejecutivo"]
+            },
+            "Santa Cruz": {
+                "icono": "🏙️",
+                "password_key": "PASSWORD_MARKETING_SANTA_CRUZ",
+                "reportes_permitidos": ["metricas_marketing", "dashboard_ventas", "kpis_operativos"]
+            }
+        }
     },
     "Trade": {
         "icono": "🏪",
         "descripcion": "Área de Trade Marketing",
         "reportes_permitidos": ["analisis_trade", "dashboard_ventas", "kpis_operativos"],
-        "password_key": "PASSWORD_TRADE"
+        "password_key": "PASSWORD_TRADE",
+        "requiere_region": True,  # ← NUEVO: Requiere selección de región
+        "regiones": {
+            "Bolivia": {
+                "icono": "🇧🇴",
+                "password_key": "PASSWORD_TRADE_BOLIVIA",
+                "reportes_permitidos": ["analisis_trade", "dashboard_ventas", "kpis_operativos"]
+            },
+            "Santa Cruz": {
+                "icono": "🏙️",
+                "password_key": "PASSWORD_TRADE_SANTA_CRUZ",
+                "reportes_permitidos": ["analisis_trade", "dashboard_ventas"]
+            }
+        }
     },
     "Contact Center": {
         "icono": "📞",
         "descripcion": "Área de Contact Center",
         "reportes_permitidos": ["dashboard_contact_center", "kpis_operativos"],
-        "password_key": "PASSWORD_CONTACT_CENTER"
+        "password_key": "PASSWORD_CONTACT_CENTER",
+        "requiere_region": False  # ← NUEVO: No requiere selección de región
     }
 }
+
+def mostrar_seleccion_region(area):
+    """
+    Muestra la pantalla de selección de región para áreas que lo requieren
+    """
+    config_area = AREAS_USUARIOS[area]
+    
+    st.markdown(f"""
+    <div style='text-align: center; padding: 2rem; background: linear-gradient(135deg, #2196F3 0%, #21CBF3 100%); 
+                color: white; border-radius: 15px; margin-bottom: 2rem;'>
+        <h1>{config_area['icono']} {area} - Selección de Región</h1>
+        <p style='font-size: 1.2em; margin: 0;'>{config_area['descripcion']}</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("### 🌍 Selecciona tu Región de Trabajo")
+    st.markdown("Elige la región para acceder a los reportes correspondientes:")
+    st.markdown("---")
+    
+    # Crear columnas para las regiones
+    regiones = list(config_area["regiones"].keys())
+    if len(regiones) == 2:
+        col1, col2 = st.columns(2)
+        columnas = [col1, col2]
+    else:
+        columnas = [st.columns(1)[0]]  # Una sola columna si hay más o menos regiones
+    
+    # Mostrar cada región como una tarjeta
+    for i, region in enumerate(regiones):
+        config_region = config_area["regiones"][region]
+        
+        # Determinar la columna
+        columna = columnas[i % len(columnas)]
+        
+        with columna:
+            # Tarjeta de la región
+            st.markdown(f"""
+            <div style='background: #f8f9fa; padding: 1.5rem; border-radius: 10px; 
+                       border-left: 4px solid #2196F3; margin-bottom: 1rem;
+                       box-shadow: 0 2px 4px rgba(0,0,0,0.1);'>
+                <h3 style='color: #1976D2; margin-top: 0;'>{config_region['icono']} {region}</h3>
+                <p style='color: #555; margin: 0.5rem 0;'>Región {region}</p>
+                <p style='color: #777; font-size: 0.9em; margin: 0.5rem 0 0 0;'>
+                    📊 {len(config_region['reportes_permitidos'])} reportes disponibles
+                </p>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            # Botón para seleccionar región
+            if st.button(
+                f"Seleccionar {region}", 
+                key=f"btn_region_{area}_{region}", 
+                use_container_width=True,
+                help=f"Acceder a {area} - {region}"
+            ):
+                st.session_state[f"region_seleccionada_{area}"] = region
+                st.rerun()
+    
+    # Botón para regresar
+    st.markdown("---")
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        if st.button("⬅️ Regresar a Selección de Área", use_container_width=True):
+            st.session_state.area_seleccionada = None
+            st.rerun()
+    
+    # Información adicional
+    st.markdown("---")
+    st.info(f"🌍 **Selección de Región**: Cada región tiene acceso a reportes específicos para {area}")
+
 
 def obtener_clave_desencriptacion():
     """
@@ -167,19 +265,31 @@ def obtener_clave_desencriptacion():
         st.error("No se pudo acceder a la configuración de encriptación")
         st.stop()
 
-def verificar_password_area(area, password_ingresado):
+def verificar_password_area(area, password_ingresado, region=None):
     """
-    Verifica la contraseña para un área específica
+    Verifica la contraseña para un área específica y región (si aplica)
     """
     try:
         config_area = AREAS_USUARIOS[area]
-        password_key = config_area["password_key"]
+        
+        # Si el área requiere región y se proporcionó región
+        if config_area.get("requiere_region", False) and region:
+            if region not in config_area["regiones"]:
+                st.error(f"❌ Región {region} no válida para {area}")
+                return False
+            
+            # Obtener configuración de la región
+            config_region = config_area["regiones"][region]
+            password_key = config_region["password_key"]
+        else:
+            # Usar password_key del área principal
+            password_key = config_area["password_key"]
         
         # Verificar si existe la contraseña en secrets
         if password_key not in st.secrets:
             st.error(f"❌ **Error de Configuración**")
             st.error(f"No se encontró {password_key} en la configuración segura.")
-            st.info("📋 **Para administradores**: Configura las contraseñas de área en Streamlit Secrets")
+            st.info("📋 **Para administradores**: Configura las contraseñas en Streamlit Secrets")
             return False
         
         # Obtener contraseña desde secrets
@@ -192,175 +302,156 @@ def verificar_password_area(area, password_ingresado):
         st.error(f"❌ **Error de Autenticación**: {str(e)}")
         return False
 
-def mostrar_pantalla_login(area):
+def mostrar_pantalla_login(area, region=None):
     """
-    Muestra la pantalla de login para un área específica
+    Muestra la pantalla de login para un área específica y región (si aplica)
     """
     config_area = AREAS_USUARIOS[area]
+    
+    # Determinar título y descripción
+    if region:
+        config_region = config_area["regiones"][region]
+        titulo = f"{config_region['icono']} {area} - {region}"
+        descripcion = f"{config_area['descripcion']} - Región {region}"
+    else:
+        titulo = f"{config_area['icono']} Acceso {area}"
+        descripcion = config_area['descripcion']
     
     st.markdown(f"""
     <div style='text-align: center; padding: 2rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
                 color: white; border-radius: 15px; margin-bottom: 2rem;'>
-        <h1>{config_area['icono']} Acceso {area}</h1>
-        <p style='font-size: 1.2em; margin: 0;'>{config_area['descripcion']}</p>
+        <h1>{titulo}</h1>
+        <p style='font-size: 1.2em; margin: 0;'>{descripcion}</p>
     </div>
     """, unsafe_allow_html=True)
     
-    # Formulario de login
-    with st.form(key=f"login_form_{area}"):
+    # Formulario de login con región específica
+    form_key = f"login_form_{area}" + (f"_{region}" if region else "")
+    with st.form(key=form_key):
         st.markdown("### 🔐 Ingresa tu Contraseña")
-        st.markdown(f"Introduce la contraseña para acceder al área **{area}**:")
+        
+        # Mensaje personalizado según región
+        if region:
+            st.markdown(f"Introduce la contraseña para acceder a **{area} - {region}**:")
+        else:
+            st.markdown(f"Introduce la contraseña para acceder al área **{area}**:")
         
         password = st.text_input(
             "Contraseña:",
             type="password",
-            placeholder="Ingresa la contraseña del área...",
-            key=f"password_{area}"
+            placeholder="Ingresa la contraseña...",
+            key=f"password_{area}" + (f"_{region}" if region else "")
         )
         
         col1, col2, col3 = st.columns([1, 2, 1])
         with col2:
             submit_button = st.form_submit_button(
-                f"🚀 Acceder a {area}",
+                f"🚀 Acceder",
                 use_container_width=True
             )
         
         if submit_button:
             if password:
-                if verificar_password_area(area, password):
+                if verificar_password_area(area, password, region):
                     # Autenticación exitosa
-                    st.session_state[f"authenticated_{area}"] = True
-                    st.success(f"✅ **Acceso concedido a {area}**")
+                    auth_key = f"authenticated_{area}" + (f"_{region}" if region else "")
+                    st.session_state[auth_key] = True
+                    
+                    # Guardar región seleccionada
+                    if region:
+                        st.session_state[f"region_seleccionada_{area}"] = region
+                    
+                    success_msg = f"✅ **Acceso concedido a {area}"
+                    if region:
+                        success_msg += f" - {region}"
+                    success_msg += "**"
+                    
+                    st.success(success_msg)
                     st.balloons()
-                    time.sleep(1)  # Pequeña pausa para mostrar el mensaje
+                    time.sleep(1)
                     st.rerun()
                 else:
-                    # Contraseña incorrecta
                     st.error("❌ **Contraseña incorrecta**")
                     st.error("Verifica la contraseña e inténtalo nuevamente")
             else:
                 st.warning("⚠️ **Por favor ingresa una contraseña**")
     
-    # Botón para regresar
+    # Botón para regresar (con lógica de región)
     st.markdown("---")
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
-        if st.button("⬅️ Regresar a Selección de Área", use_container_width=True):
-            st.session_state.area_seleccionada = None
-            st.rerun()
-    
-    # Información adicional
-    st.markdown("---")
-    st.info(f"🔒 **Seguridad**: El acceso al área {area} está protegido por contraseña")
-    st.markdown(f"""
-    <div style='background: #f8f9fa; padding: 1rem; border-radius: 8px; border-left: 4px solid #17a2b8;'>
-        <strong>📊 Reportes disponibles en {area}:</strong><br>
-        • {len(config_area['reportes_permitidos'])} reportes autorizados<br>
-        • Acceso seguro y controlado<br>
-        • Datos protegidos con encriptación
-    </div>
-    """, unsafe_allow_html=True)
+        if region:
+            # Si está en login de región, regresar a selección de región
+            if st.button("⬅️ Regresar a Selección de Región", use_container_width=True):
+                if f"region_seleccionada_{area}" in st.session_state:
+                    del st.session_state[f"region_seleccionada_{area}"]
+                st.rerun()
+        else:
+            # Si no hay región, regresar a selección de área
+            if st.button("⬅️ Regresar a Selección de Área", use_container_width=True):
+                st.session_state.area_seleccionada = None
+                st.rerun()
 
 def seleccionar_area_usuario():
-    """Permite al usuario seleccionar su área de trabajo"""
+    """Permite al usuario seleccionar su área de trabajo y región si es necesario"""
     if 'area_seleccionada' not in st.session_state:
         st.session_state.area_seleccionada = None
     
     # Si no hay área seleccionada, mostrar pantalla de selección
     if st.session_state.area_seleccionada is None:
-        st.title("🏢 Portal de Reportes Power BI")
-        st.markdown("### 👥 Selecciona tu Área de Trabajo")
-        st.markdown("Elige tu área para acceder a los reportes correspondientes:")
-        st.markdown("---")
-        
-        # Colores personalizados para cada área
-        colores_areas = {
-            "Comercial": {
-                "fondo": "#e8f4fd",  # Azul claro
-                "borde": "#1976d2",  # Azul
-                "titulo": "#0d47a1",  # Azul oscuro
-                "boton": "#1976d2"   # Azul para botón
-            },
-            "Marketing": {
-                "fondo": "#fce4ec",  # Rosa claro
-                "borde": "#e91e63",  # Rosa
-                "titulo": "#ad1457",  # Rosa oscuro
-                "boton": "#e91e63"   # Rosa para botón
-            },
-            "Trade": {
-                "fondo": "#f3e5f5",  # Morado claro
-                "borde": "#9c27b0",  # Morado
-                "titulo": "#6a1b9a",  # Morado oscuro
-                "boton": "#9c27b0"   # Morado para botón
-            },
-            "Contact Center": {
-                "fondo": "#e8f5e8",  # Verde claro
-                "borde": "#4caf50",  # Verde
-                "titulo": "#2e7d32",  # Verde oscuro
-                "boton": "#4caf50"   # Verde para botón
-            }
-        }
-        
-        # Crear botones para cada área
-        col1, col2 = st.columns(2)
-        
-        areas_lista = list(AREAS_USUARIOS.keys())
-        
-        for i, area in enumerate(areas_lista):
-            config_area = AREAS_USUARIOS[area]
-            colores = colores_areas.get(area, colores_areas["Comercial"])  # Color por defecto
-            
-            # Alternar columnas
-            columna = col1 if i % 2 == 0 else col2
-            
-            with columna:
-                st.markdown(f"""
-                <div class='area-card' style='background: {colores["fondo"]}; padding: 1.5rem; border-radius: 10px; 
-                           border-left: 4px solid {colores["borde"]}; margin-bottom: 1rem;
-                           box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: all 0.3s ease;
-                           cursor: pointer;'>
-                    <h3 style='color: {colores["titulo"]}; margin-top: 0;'>{config_area['icono']} {area}</h3>
-                    <p style='color: #555; margin: 0.5rem 0;'>{config_area['descripcion']}</p>
-                    <p style='color: #777; font-size: 0.9em; margin: 0.5rem 0 0 0;'>
-                        📊 {len(config_area['reportes_permitidos'])} reportes disponibles
-                    </p>
-                </div>
-                """, unsafe_allow_html=True)
-                
-                # Botón personalizado con color del área
-                if st.button(
-                    f"Acceder como {area}", 
-                    key=f"btn_{area}", 
-                    use_container_width=True,
-                    help=f"Ingresar al área {area}"
-                ):
-                    st.session_state.area_seleccionada = area
-                    st.rerun()
-                
-                st.markdown("<br>", unsafe_allow_html=True)
-        
-        # Información adicional
-        st.markdown("---")
-        st.info("🔒 **Acceso Controlado:** Solo verás los reportes autorizados para tu área de trabajo")
+        # ... (código existente para mostrar selección de área)
         return False
     
-    # Verificar si el usuario está autenticado para el área seleccionada
     area_actual = st.session_state.area_seleccionada
-    if f"authenticated_{area_actual}" not in st.session_state or not st.session_state[f"authenticated_{area_actual}"]:
-        # Mostrar pantalla de login
-        mostrar_pantalla_login(area_actual)
-        return False
+    config_area = AREAS_USUARIOS[area_actual]
+    
+    # NUEVO: Verificar si el área requiere selección de región
+    if config_area.get("requiere_region", False):
+        # Verificar si ya se seleccionó región
+        region_key = f"region_seleccionada_{area_actual}"
+        if region_key not in st.session_state:
+            # Mostrar pantalla de selección de región
+            mostrar_seleccion_region(area_actual)
+            return False
+        
+        # Obtener región seleccionada
+        region_actual = st.session_state[region_key]
+        
+        # Verificar autenticación para área + región
+        auth_key = f"authenticated_{area_actual}_{region_actual}"
+        if auth_key not in st.session_state or not st.session_state[auth_key]:
+            mostrar_pantalla_login(area_actual, region_actual)
+            return False
+    else:
+        # Área sin región - verificar autenticación normal
+        auth_key = f"authenticated_{area_actual}"
+        if auth_key not in st.session_state or not st.session_state[auth_key]:
+            mostrar_pantalla_login(area_actual)
+            return False
     
     return True
 
-def obtener_reportes_por_area(area):
-    """Obtiene los reportes permitidos para un área específica"""
+
+def obtener_reportes_por_area(area, region=None):
+    """Obtiene los reportes permitidos para un área específica y región"""
     if area not in AREAS_USUARIOS:
         return {}
     
-    reportes_permitidos = AREAS_USUARIOS[area]["reportes_permitidos"]
-    reportes_filtrados = {}
+    config_area = AREAS_USUARIOS[area]
     
+    # Si el área requiere región y se proporcionó región
+    if config_area.get("requiere_region", False) and region:
+        if region not in config_area["regiones"]:
+            return {}
+        
+        # Obtener reportes de la región específica
+        reportes_permitidos = config_area["regiones"][region]["reportes_permitidos"]
+    else:
+        # Usar reportes del área principal
+        reportes_permitidos = config_area["reportes_permitidos"]
+    
+    # Filtrar URLs disponibles
+    reportes_filtrados = {}
     for reporte_key in reportes_permitidos:
         if reporte_key in URLS_ENCRIPTADAS:
             reportes_filtrados[reporte_key] = URLS_ENCRIPTADAS[reporte_key]
