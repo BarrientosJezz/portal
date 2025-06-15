@@ -802,13 +802,13 @@ def mostrar_spinner_personalizado():
         100% { transform: rotate(360deg); }
     }
     .custom-spinner {
-        border: 4px solid #f3f3f3;
-        border-top: 4px solid #3498db;
+        border: 7px solid #f3f3f3;
+        border-top: 7px solid #3498db;
         border-radius: 50%;
-        width: 40px;
-        height: 40px;
+        width: 70px;
+        height: 70px;
         animation: spin 1s linear infinite;
-        margin: 20px auto;
+        margin: 40px auto;
     }
     .spinner-container {
         text-align: center;
