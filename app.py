@@ -436,7 +436,7 @@ def mostrar_pantalla_login(area, region=None):
                     success_msg += "**"
                     
                     st.success(success_msg)
-                    st.balloons()
+                    st.snow()
                     time.sleep(1)
                     st.rerun()
                 else:
