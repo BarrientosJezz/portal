@@ -148,7 +148,7 @@ AREAS_USUARIOS = {
                 "reportes_permitidos": ["analisis_trade", "dashboard_ventas", "kpis_operativos"]
             },
             "Santa Cruz": {
-                "icono": "🏙️",
+                "icono": "svg width="24" height="24" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><rect x="8" y="16" width="48" height="10.67" fill="#228B22"/><rect x="8" y="26.67" width="48" height="10.67" fill="#FFFFFF"/><rect x="8" y="37.33" width="48" height="10.67" fill="#228B22"/><rect x="8" y="16" width="48" height="32" fill="none" stroke="#333" stroke-width="1"/><rect x="6" y="12" width="2" height="40" fill="#8B4513"/></svg>",
                 "password_key": "PASSWORD_TRADE_SANTA_CRUZ",
                 "reportes_permitidos": ["analisis_trade", "dashboard_ventas"]
             }
