@@ -436,7 +436,7 @@ def mostrar_pantalla_login(area, region=None):
                     success_msg += "**"
                     
                     st.success(success_msg)
-                    st.snow()
+                    mostrar_toast_notification("✅ Acceso Concedido")
                     time.sleep(1)
                     st.rerun()
                 else:
@@ -682,6 +682,229 @@ def mostrar_multiples_reportes():
             else:
                 st.error(f"❌ Error al cargar el reporte: {TITULOS_REPORTES.get(reporte_key, reporte_key)}")
 
+# ========== OPCIÓN 1: NIEVE (st.snow()) ==========
+# Reemplaza st.balloons() con:
+st.snow()
+
+# ========== OPCIÓN 2: ANIMACIONES CSS PERSONALIZADAS ==========
+def mostrar_animacion_success():
+    """Animación personalizada de éxito con CSS"""
+    st.markdown("""
+    <style>
+    @keyframes slideInDown {
+        from { opacity: 0; transform: translate3d(0, -100%, 0); }
+        to { opacity: 1; transform: translate3d(0, 0, 0); }
+    }
+    @keyframes pulse {
+        from { transform: scale3d(1, 1, 1); }
+        50% { transform: scale3d(1.05, 1.05, 1.05); }
+        to { transform: scale3d(1, 1, 1); }
+    }
+    .success-animation {
+        animation: slideInDown 0.8s ease-out, pulse 1.5s ease-in-out infinite;
+        background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+        color: white;
+        padding: 1rem;
+        border-radius: 10px;
+        text-align: center;
+        margin: 1rem 0;
+        box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+    }
+    </style>
+    <div class="success-animation">
+        ✅ <strong>¡Acceso Concedido!</strong> 🎉
+    </div>
+    """, unsafe_allow_html=True)
+
+# ========== OPCIÓN 3: CONFETTI CSS ==========
+def mostrar_confetti():
+    """Animación de confetti CSS"""
+    st.markdown("""
+    <style>
+    @keyframes confetti-fall {
+        0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+        100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+    }
+    .confetti {
+        position: fixed;
+        top: -10px;
+        left: 50%;
+        width: 10px;
+        height: 10px;
+        background: #f39c12;
+        animation: confetti-fall 3s linear infinite;
+        z-index: 1000;
+    }
+    .confetti:nth-child(1) { left: 10%; background: #e74c3c; animation-delay: 0s; }
+    .confetti:nth-child(2) { left: 20%; background: #3498db; animation-delay: 0.2s; }
+    .confetti:nth-child(3) { left: 30%; background: #2ecc71; animation-delay: 0.4s; }
+    .confetti:nth-child(4) { left: 40%; background: #f39c12; animation-delay: 0.6s; }
+    .confetti:nth-child(5) { left: 60%; background: #9b59b6; animation-delay: 0.8s; }
+    .confetti:nth-child(6) { left: 70%; background: #e67e22; animation-delay: 1s; }
+    .confetti:nth-child(7) { left: 80%; background: #1abc9c; animation-delay: 1.2s; }
+    .confetti:nth-child(8) { left: 90%; background: #34495e; animation-delay: 1.4s; }
+    </style>
+    <div class="confetti"></div>
+    <div class="confetti"></div>
+    <div class="confetti"></div>
+    <div class="confetti"></div>
+    <div class="confetti"></div>
+    <div class="confetti"></div>
+    <div class="confetti"></div>
+    <div class="confetti"></div>
+    """, unsafe_allow_html=True)
+
+# ========== OPCIÓN 4: MENSAJE CON FADEOUT ==========
+def mostrar_mensaje_fadeout(mensaje, tipo="success"):
+    """Mensaje que desaparece gradualmente"""
+    color_bg = {
+        "success": "#d4edda",
+        "info": "#d1ecf1", 
+        "warning": "#fff3cd",
+        "error": "#f8d7da"
+    }
+    
+    color_text = {
+        "success": "#155724",
+        "info": "#0c5460",
+        "warning": "#856404", 
+        "error": "#721c24"
+    }
+    
+    st.markdown(f"""
+    <style>
+    @keyframes fadeOut {{
+        0% {{ opacity: 1; transform: translateY(0); }}
+        70% {{ opacity: 1; transform: translateY(0); }}
+        100% {{ opacity: 0; transform: translateY(-20px); }}
+    }}
+    .fade-message {{
+        background-color: {color_bg.get(tipo, color_bg["success"])};
+        color: {color_text.get(tipo, color_text["success"])};
+        padding: 1rem;
+        border-radius: 8px;
+        text-align: center;
+        font-weight: bold;
+        animation: fadeOut 3s ease-in-out forwards;
+        border: 1px solid {color_text.get(tipo, color_text["success"])}40;
+    }}
+    </style>
+    <div class="fade-message">{mensaje}</div>
+    """, unsafe_allow_html=True)
+
+# ========== OPCIÓN 5: LOADING SPINNER PERSONALIZADO ==========
+def mostrar_spinner_personalizado():
+    """Spinner personalizado mientras se carga"""
+    st.markdown("""
+    <style>
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    .custom-spinner {
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #3498db;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+        margin: 20px auto;
+    }
+    .spinner-container {
+        text-align: center;
+        padding: 2rem;
+    }
+    </style>
+    <div class="spinner-container">
+        <div class="custom-spinner"></div>
+        <p>🔓 Autenticando acceso...</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+# ========== OPCIÓN 6: PROGRESS BAR ANIMADO ==========
+def mostrar_progress_bar_animado():
+    """Barra de progreso animada"""
+    progress_bar = st.progress(0)
+    for i in range(100):
+        time.sleep(0.02)  # Ajusta la velocidad
+        progress_bar.progress(i + 1)
+    progress_bar.empty()
+
+# ========== OPCIÓN 7: TOAST NOTIFICATION ==========
+def mostrar_toast_notification(mensaje):
+    """Notificación estilo toast"""
+    st.markdown(f"""
+    <style>
+    @keyframes slideInRight {{
+        from {{ transform: translateX(100%); opacity: 0; }}
+        to {{ transform: translateX(0); opacity: 1; }}
+    }}
+    @keyframes slideOutRight {{
+        from {{ transform: translateX(0); opacity: 1; }}
+        to {{ transform: translateX(100%); opacity: 0; }}
+    }}
+    .toast-notification {{
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        animation: slideInRight 0.5s ease-out, slideOutRight 0.5s ease-in 2.5s forwards;
+        z-index: 1000;
+        font-weight: bold;
+    }}
+    </style>
+    <div class="toast-notification">
+        {mensaje}
+    </div>
+    """, unsafe_allow_html=True)
+
+# ========== IMPLEMENTACIÓN EN TU CÓDIGO ==========
+def verificar_password_area_con_animacion(area, password_ingresado, region=None):
+    """Versión modificada con diferentes animaciones"""
+    try:
+        config_area = AREAS_USUARIOS[area]
+        
+        # ... (resto del código de verificación) ...
+        
+        if password_ingresado == password_correcto:
+            # OPCIÓN 1: Nieve
+            st.snow()
+            
+            # OPCIÓN 2: Animación CSS personalizada
+            # mostrar_animacion_success()
+            
+            # OPCIÓN 3: Confetti
+            # mostrar_confetti()
+            
+            # OPCIÓN 4: Mensaje con fadeout
+            # mostrar_mensaje_fadeout("✅ ¡Acceso Concedido Exitosamente! 🎉")
+            
+            # OPCIÓN 5: Toast notification
+            # mostrar_toast_notification("✅ Acceso Autorizado")
+            
+            # OPCIÓN 6: Progress bar animado
+            # mostrar_progress_bar_animado()
+            
+            return True
+        else:
+            return False
+            
+    except Exception as e:
+        st.error(f"❌ **Error de Autenticación**: {str(e)}")
+        return False
+
+# ========== EJEMPLO DE USO EN mostrar_pantalla_login ==========
+# En la función mostrar_pantalla_login, reemplaza:
+# st.balloons()
+
+# Por cualquiera de estas opciones:
+# st.snow()  # Más elegante para entorno corporativo
+# mostrar_animacion_success()  # Animación personalizada
+# mostrar_toast_notification("✅ Acceso Concedido")  # Notificación moderna
 def main():
     """Función principal de la aplicación"""
     
