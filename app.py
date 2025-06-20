@@ -76,7 +76,17 @@ def debug_desencriptacion():
 # ✅ URLs ENCRIPTADAS - SEGURO ESTAR EN GITHUB PÚBLICO
 # Reemplaza estas URLs con las que genere tu script de encriptación
 URLS_ENCRIPTADAS = {
-    "dashboard_ventas": "gAAAAABoTAF9CO9xjBiy3mYHHkO7VqSgknpe9RXG3Rwx4mMRquE02nYB8jvgvTlJ6XJckp_8ih4gYYV_lgFmKb0QXdjWMy7B8RohvNMfYDYs-lwKKVxgEwauS8_t0raCBL2A5zCjyqfFkafLbJ_tsz7bKSrURJGTndbAiAGbNBih6gyD-C3mkJ-56Q66bRFaXoqKDCa63cNXPoLA0ZYX0lqJzQsz3vIsh9_YRuPfZxHpmXVsXQsikXKwHifC17XiwHy71Kzt-QrE7Az2r6m2nczmsZWVuieFWg==",
+    "2024 08 AGO": "gAAAAABoT5jt5lq98ExRBmvSH9sMh9PkCLtbQso0lzM1drn8ohEr4tPLSho83Mv-M05aOmFSRj9QV2SmtUvILZSdzn9h0HqkPaxqBi_hpx8BPEbKS1MaHd3WEB8_VnHfSl-Vuv8wjEgqydQkfqNxLkCgE3x6mwdZ9DVkx-PNkbiPvChSvET0TcVHIWGTKOK-uj4Pg0i7VJkz3ndmHwBbWiCboL7LPbRr16rOb8c_23awS6Pn1SCSyRBxMX2Hjk6_3uyub9AKnipAhqIHLAx8W88TL_QAbgk0nQ==",
+    "2024 09 SEP": "gAAAAABoT5jt1RCkknB3XF0vcuga0zu0YvmU3cL8xPv5ZBpd3ehVfCBHjroWyGFaCxyuTqdZssHGHu7tUXXRk__ZNMEeROhxmHQ7AqCWhRd6CenaGsiQnR1anwLIsiLyH_wgkM_XXBBg6YutYSOU1N5yALMsfP3U_Gs0e1aFGvcu12KjnmGe0aJj4Llka8YHEzLfSjhPH27OXvXUJO4lJYTOw5KbFAYj3NTerM-7E1f9Tgjn3trSxXige9rb9mueRVh44upnQX4PPe8mpnF1-dXCQsfWiR76gg==",
+    "2024 10 OCT": "gAAAAABoT5jtKGbJSZkKxoWrMP3HTajVP6CRRfF9cHGobUv6_y9o3xdyWF2HwsX-FwxIblUsS-IV9jmW3Qlsx56fKa2LJkObVBtENCIz8FzY11omImN53GcGjWCfJea_kPPaOkAs71_UqwlLVx479bjMFe-w4t76QdwRmI1v4rkNNcq18PmpqeRzkcP074A34TnHgkuf0ngDvaI95D5Br27fNr0tgzlBgaJYHyV2j_cx7MV9890WN9-JjAhpuBvjMwNOXuq8gO-glBV5A4fFUMpVgcoLGTjhbg==",
+    "2024 11 NOV": "gAAAAABoT5jto39kcP5KyXjHoyVcvTjxR8fswPuPTz5CCONHfW-rLrbwB0Rjdsnnu-JiDxKH3v2DTpCn8fk8nkWHdWUWtT_WqLkAP7MmbqTdRyCxHxx8wMxOnfS05xBvyQoqzRNiZhwTCcZEQHFU43iBAIhiTbAMoCaz5OGMxb_KHC1zg5y5MqPmn4qBPpDPNDdJzuVp6itIdDht_Lg-I8LCElic_k6Y5WEFrBtj1l-nhsr7gXTSBZs7sgcBlDURLQPJafiq3UwtJps8yPeNqfhfic21ojRtJg==",
+    "2024 12 DIC": "gAAAAABoT5jt6q7HayGJxtxL4azL-bIAUi78d6fmnGZTO4DvaV5pnEw9st-Dd-k-0grU29Z5FRP15YzGwYZc7EqT50JJBSFkKmpjfnhPBIoAYlHT5WLEpDnVzIul4XvrhSD67JvVbi4F1VmYD8ldx8RjfWhSLFWRzTmt6npbJ2hvssfT1vEp1tvtICJmQidtgMcvzbZaiJ7Zfiagy8E9nnQloJdi_hPMzs-l54VA7GSgyMwg4vcrpKHP0S119_OjiT1pWWWBFIpcnpXLOWRJSGUlZOdmucgZsw==",
+    "2025 01 ENE": "gAAAAABoT5jtxaqrHYh9bl4iIgjLhPwR5SzjRTinMYtEp8iDKT8hkbNh4ctcelyN2d-Cy3WrlH4aGR4pp6z04swyHK9QQX4BDAy7yKtzgwDinti-N2m5cjwjwFVzA8iX66Y7rQeWHaMNygMotXn1cfgfezxBplmX-1U8qvFM7VkkKDmFaMF-u_Mo67wG4r4VBxF_uL-psJeJJ1Uq-bUSk-9amhxncx56CIwnYg_iKK2otDSLki1UtjLvp2GS1I9Yhq_iWwoirbulXE5S-rmFS5Q1iwj7dGGzTw==",
+    "2025 02 FEB": "gAAAAABoT5jtV5nhz8PO-Lj5rkNEJx1TU3zSvE99MzMBVhtVS4jAZAFxj8gMH8Ga4h82SFiIToWICbN_BVguJP_5Bf4rjjzKrSVTeAmRZQsxl3OQO3wqx9zbTdHPSVXNbnhN9G9smx2WH-xPBalO783S5FJW-myuqhDoQWdesDDphtk1Mf-WTMuFBLlkrecWBYt5z1pGnnpZ7u7OteHwI37k3CoczE-dPfyZpFwomblaUBqYLODBP7PohM5hshGumb2SFYqO8WI_KyEMndWr7FdaNy6OO4SvoA==",
+    "2025 03 MAR": "gAAAAABoT5jt92-BE2i9pux0ixT0ootH0EiIZV350mFbv6JFxj6YMIlel7ZnwuohJDeZRTvPiGCDFUP4pOdW4l1Gpeg9d7MdcI9pmxJgxnKNPtuKSK_g10-Lnahu4O_1aTB8BXxEJPFoPNT-EKJO2EXrnTn3Zmua61GIa4tLXFfl64yvTTmgdikfJ88_MwT4LdlDxyWybB5xIEZJiIa4zDd5RTji6wtIVIiscB7aQH_JKYkxBWKMakfdmu7rKqF0CJsyFqQJ3B32SxWwesPjcHGY5L_s8a2lDw==",
+    "2025 04 ABR": "gAAAAABoT5jtD733HM5CmAsKg3y2lKTXn4le2_df40tM-6kNC0B8Z_oSM-qnEp6ZGa2AGapF6XmkBXteFuGWH99J8qUfkWMYSy6w-F3rcVCz6Sz48oVkXW0OxMXx4I_E6mWzJgOW-XwS8GW8LXXGeQF10gUaR7-ZSEeldqt_Z91R9DE-H5ejYuDyJGrHZT_a9cF6s9f7lEEvNUODRQ2HW0H1vsASKDlYYYuwLDP7vtnIQ328VdLdQbI8gn7vNqWT4s5VQdmz-SPjNsLAbj2Lme4by5WScEhYZw==",
+    "2025 05 MAY": "gAAAAABoT5jtXD6Mbd24WDJ0x44RgTusQcvqa6qeG45RcpYsnTzxbFQ7RtulfulTEUl7QAAcenufFdW-bsNbE-qzIpDcYfzEVyGE7l9ZggOvdh4Ovvt8crRJXgjl6kkxPTFFtdBoHgLYyV4je-0C7bkW-NXlqA2OJ98ZLmxgXttL1B9j9-jBCqxOSpADyy9qK0IkhUZL1Bigrqi71ucKZUq9GwJ1Yhhktdx85z0gYqQJDGiUY5yd9mJNAMSg7NL13DwEn8Yct1MfbXtj4cz2nicyGHqyM8DpBg==",
+    "Mes_actual": "gAAAAABoUcBPynLVYd98Rz1V18d2hLkiYoINkmEpGcG2jsA45yp8x9GHwNWG6pMf-v43AN4zhbXDxTXmJOVjdjmT1YBtdHOHLuB3T6MDVL0vDu9-rfU4qRpMKclhmYxeUnUbGykm9qYQo9C4ielJOqWVuroNG4xmgbdfrhmFibx4m8DtWe0j30IgyDE7DEPy3KUFJLV-EaeDa9JiSoDCUynSC4kbFaQ-HGfnjcTzf1NEL3P8Uaory6CWoTyruGrSSLv43ZJSm557ozAJ0DmF47XVXr7fSMwLlg==",
     "analisis_financiero": "gAAAAABh_ejemplo_url_encriptada_2_aqui", 
     "kpis_operativos": "gAAAAABh_ejemplo_url_encriptada_3_aqui",
     "reporte_ejecutivo": "gAAAAABh_ejemplo_url_encriptada_4_aqui",
@@ -87,7 +97,17 @@ URLS_ENCRIPTADAS = {
 
 # Títulos amigables para los reportes
 TITULOS_REPORTES = {
-    "dashboard_ventas": "📈 Dashboard de Ventas",
+    "2024 08 AGO": "📈 Ago-2024",
+    "2024 09 SEP": "📈 Sep-2024",
+    "2024 10 OCT": "📈 Oct-2024",
+    "2024 11 NOV": "📈 Nov-2024",
+    "2024 12 DIC": "📈 Dic-2024",
+    "2025 01 ENE": "📈 Ene-2025",
+    "2025 02 FEB": "📈 Feb-2025",
+    "2025 03 MAR": "📈 Mar-2025",
+    "2025 04 ABR": "📈 Abr-2025",
+    "2025 05 MAY": "📈 May-2025",
+    "Mes_actual": "📈 Mes actual",
     "analisis_financiero": "💰 Análisis Financiero", 
     "kpis_operativos": "🎯 KPIs Operativos",
     "reporte_ejecutivo": "👔 Reporte Ejecutivo",
@@ -98,7 +118,17 @@ TITULOS_REPORTES = {
 
 # Descripciones de los reportes
 DESCRIPCIONES_REPORTES = {
-    "dashboard_ventas": "Métricas de ventas, tendencias y análisis de performance",
+    "2024 08 AGO": "Métricas de ventas al cierre del mes",
+    "2024 09 SEP": "Métricas de ventas al cierre del mes",
+    "2024 10 OCT": "Métricas de ventas al cierre del mes",
+    "2024 11 NOV": "Métricas de ventas al cierre del mes",
+    "2024 12 DIC": "Métricas de ventas al cierre del mes",
+    "2025 01 ENE": "Métricas de ventas al cierre del mes",
+    "2025 02 FEB": "Métricas de ventas al cierre del mes",
+    "2025 03 MAR": "Métricas de ventas al cierre del mes",
+    "2025 04 ABR": "Métricas de ventas al cierre del mes",
+    "2025 05 MAY": "Métricas de ventas al cierre del mes",
+    "Mes_actual": "Métricas de ventas a la fecha del informe",
     "analisis_financiero": "Estados financieros, flujo de caja y análisis de rentabilidad",
     "kpis_operativos": "Indicadores clave de rendimiento operativo",
     "reporte_ejecutivo": "Resumen ejecutivo con métricas consolidadas",
@@ -111,14 +141,28 @@ DESCRIPCIONES_REPORTES = {
 AREAS_USUARIOS = {
     "Comercial": {
         "icono": "💼",
-        "descripcion": "Área Comercial y Ventas",
-        "reportes_permitidos": ["dashboard_ventas", "analisis_financiero", "kpis_operativos", "reporte_ejecutivo"],
+        "descripcion": "Área Comercial & Ventas",
+        "reportes_permitidos": ["2024 08 AGO","2024 09 SEP","2024 10 OCT","2024 11 NOV","2024 12 DIC","2025 01 ENE","2025 02 FEB","2025 03 MAR","2025 04 ABR","2025 05 MAY",
+                                "Mes_actual"],
         "password_key": "PASSWORD_COMERCIAL",
-        "requiere_region": False  # ← NUEVO: No requiere selección de región
+        "requiere_region": True,  # ← NUEVO: No requiere selección de región
+        "regiones": {
+            "Bolivia": {
+                "icono": "<svg width=\"24\" height=\"24\" viewBox=\"0 0 64 64\" xmlns=\"http://www.w3.org/2000/svg\"><rect x=\"8\" y=\"16\" width=\"48\" height=\"10.67\" fill=\"#DC143C\"/><rect x=\"8\" y=\"26.67\" width=\"48\" height=\"10.67\" fill=\"#FFD700\"/><rect x=\"8\" y=\"37.33\" width=\"48\" height=\"10.67\" fill=\"#228B22\"/><rect x=\"8\" y=\"16\" width=\"48\" height=\"32\" fill=\"none\" stroke=\"#333\" stroke-width=\"1\"/><rect x=\"6\" y=\"12\" width=\"2\" height=\"40\" fill=\"#8B4513\"/></svg>","password_key": "PASSWORD_MARKETING_BOLIVIA",
+                "password_key": "PASSWORD_COMERCIAL_BOLIVIA",
+                "reportes_permitidos": ["2024 08 AGO","2024 09 SEP","2024 10 OCT","2024 11 NOV","2024 12 DIC","2025 01 ENE","2025 02 FEB","2025 03 MAR","2025 04 ABR","2025 05 MAY",
+                                        "Mes_actual"]
+            },
+            "Santa Cruz": {
+                "icono": "<svg width=\"24\" height=\"24\" viewBox=\"0 0 64 64\" xmlns=\"http://www.w3.org/2000/svg\"><rect x=\"8\" y=\"16\" width=\"48\" height=\"10.67\" fill=\"#228B22\"/><rect x=\"8\" y=\"26.67\" width=\"48\" height=\"10.67\" fill=\"#FFFFFF\"/><rect x=\"8\" y=\"37.33\" width=\"48\" height=\"10.67\" fill=\"#228B22\"/><rect x=\"8\" y=\"16\" width=\"48\" height=\"32\" fill=\"none\" stroke=\"#333\" stroke-width=\"1\"/><rect x=\"6\" y=\"12\" width=\"2\" height=\"40\" fill=\"#8B4513\"/></svg>",
+                "password_key": "PASSWORD_COMERCIAL_SANTA_CRUZ",
+                "reportes_permitidos": ["metricas_marketing", "dashboard_ventas", "kpis_operativos"]
+            }
+        }
     },
     "Marketing": {
         "icono": "📢",
-        "descripcion": "Área de Marketing y Comunicaciones",
+        "descripcion": "Área de Marketing & Publicidad",
         "reportes_permitidos": ["metricas_marketing", "dashboard_ventas", "kpis_operativos", "reporte_ejecutivo"],
         "password_key": "PASSWORD_MARKETING",
         "requiere_region": True,  # ← NUEVO: Requiere selección de región
@@ -134,9 +178,9 @@ AREAS_USUARIOS = {
             }
         }
     },
-    "Trade": {
+    "Trade & Eventos": {
         "icono": "🏪",
-        "descripcion": "Área de Trade Marketing",
+        "descripcion": "Área de Trade & Eventos",
         "reportes_permitidos": ["analisis_trade", "dashboard_ventas", "kpis_operativos"],
         "password_key": "PASSWORD_TRADE",
         "requiere_region": True,  # ← NUEVO: Requiere selección de región
