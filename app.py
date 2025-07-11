@@ -146,7 +146,7 @@ AREAS_USUARIOS = {
         "icono": "💼",
         "descripcion": "Área Comercial & Ventas",
         "reportes_permitidos": ["2024 08 AGO","2024 09 SEP","2024 10 OCT","2024 11 NOV","2024 12 DIC","2025 01 ENE","2025 02 FEB","2025 03 MAR","2025 04 ABR","2025 05 MAY",
-                                "Mes_actual"],
+                                "2025 06 JUN","Mes_actual"],
         "password_key": "PASSWORD_COMERCIAL",
         "requiere_region": True,  # ← NUEVO: No requiere selección de región
         "regiones": {
@@ -154,7 +154,7 @@ AREAS_USUARIOS = {
                 "icono": "<svg width=\"24\" height=\"24\" viewBox=\"0 0 64 64\" xmlns=\"http://www.w3.org/2000/svg\"><rect x=\"8\" y=\"16\" width=\"48\" height=\"10.67\" fill=\"#DC143C\"/><rect x=\"8\" y=\"26.67\" width=\"48\" height=\"10.67\" fill=\"#FFD700\"/><rect x=\"8\" y=\"37.33\" width=\"48\" height=\"10.67\" fill=\"#228B22\"/><rect x=\"8\" y=\"16\" width=\"48\" height=\"32\" fill=\"none\" stroke=\"#333\" stroke-width=\"1\"/><rect x=\"6\" y=\"12\" width=\"2\" height=\"40\" fill=\"#8B4513\"/></svg>","password_key": "PASSWORD_MARKETING_BOLIVIA",
                 "password_key": "PASSWORD_COMERCIAL_BOLIVIA",
                 "reportes_permitidos": ["2024 08 AGO","2024 09 SEP","2024 10 OCT","2024 11 NOV","2024 12 DIC","2025 01 ENE","2025 02 FEB","2025 03 MAR","2025 04 ABR","2025 05 MAY",
-                                        "Mes_actual"]
+                                        "2025 06 JUN","Mes_actual"]
             },
             "Santa Cruz": {
                 "icono": "<svg width=\"24\" height=\"24\" viewBox=\"0 0 64 64\" xmlns=\"http://www.w3.org/2000/svg\"><rect x=\"8\" y=\"16\" width=\"48\" height=\"10.67\" fill=\"#228B22\"/><rect x=\"8\" y=\"26.67\" width=\"48\" height=\"10.67\" fill=\"#FFFFFF\"/><rect x=\"8\" y=\"37.33\" width=\"48\" height=\"10.67\" fill=\"#228B22\"/><rect x=\"8\" y=\"16\" width=\"48\" height=\"32\" fill=\"none\" stroke=\"#333\" stroke-width=\"1\"/><rect x=\"6\" y=\"12\" width=\"2\" height=\"40\" fill=\"#8B4513\"/></svg>",
