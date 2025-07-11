@@ -86,6 +86,7 @@ URLS_ENCRIPTADAS = {
     "2025 03 MAR": "gAAAAABoT5jt92-BE2i9pux0ixT0ootH0EiIZV350mFbv6JFxj6YMIlel7ZnwuohJDeZRTvPiGCDFUP4pOdW4l1Gpeg9d7MdcI9pmxJgxnKNPtuKSK_g10-Lnahu4O_1aTB8BXxEJPFoPNT-EKJO2EXrnTn3Zmua61GIa4tLXFfl64yvTTmgdikfJ88_MwT4LdlDxyWybB5xIEZJiIa4zDd5RTji6wtIVIiscB7aQH_JKYkxBWKMakfdmu7rKqF0CJsyFqQJ3B32SxWwesPjcHGY5L_s8a2lDw==",
     "2025 04 ABR": "gAAAAABoT5jtD733HM5CmAsKg3y2lKTXn4le2_df40tM-6kNC0B8Z_oSM-qnEp6ZGa2AGapF6XmkBXteFuGWH99J8qUfkWMYSy6w-F3rcVCz6Sz48oVkXW0OxMXx4I_E6mWzJgOW-XwS8GW8LXXGeQF10gUaR7-ZSEeldqt_Z91R9DE-H5ejYuDyJGrHZT_a9cF6s9f7lEEvNUODRQ2HW0H1vsASKDlYYYuwLDP7vtnIQ328VdLdQbI8gn7vNqWT4s5VQdmz-SPjNsLAbj2Lme4by5WScEhYZw==",
     "2025 05 MAY": "gAAAAABoT5jtXD6Mbd24WDJ0x44RgTusQcvqa6qeG45RcpYsnTzxbFQ7RtulfulTEUl7QAAcenufFdW-bsNbE-qzIpDcYfzEVyGE7l9ZggOvdh4Ovvt8crRJXgjl6kkxPTFFtdBoHgLYyV4je-0C7bkW-NXlqA2OJ98ZLmxgXttL1B9j9-jBCqxOSpADyy9qK0IkhUZL1Bigrqi71ucKZUq9GwJ1Yhhktdx85z0gYqQJDGiUY5yd9mJNAMSg7NL13DwEn8Yct1MfbXtj4cz2nicyGHqyM8DpBg==",
+    "2025 06 JUN": "gAAAAABocR_yMIggTC-1VKq3BIV3iYvJA02s85uhc38y6vxQRcCD18K9RJK51hU-h4QqjNpFg_Zya8I5HlUssgCMyDzm4NvDjp-MoreCdztZI7lzT1Aj-x00l3kng4MsCuyes0Seu8bGpdP-GFBfn8OvMI0YRmKbtGX6RArhSU7w6i-TZJ_qrUFGgT6o0ip6cPVgy1vTg6zgURZTNXcr9Win9phD8-gIz265YhN8iDzrqZQ9RA8who6lLKZaoHAtPl-og3-aeF59fVVq7N-3qKX2DRTdXAaTFg==",
     "Mes_actual": "gAAAAABoUcBPynLVYd98Rz1V18d2hLkiYoINkmEpGcG2jsA45yp8x9GHwNWG6pMf-v43AN4zhbXDxTXmJOVjdjmT1YBtdHOHLuB3T6MDVL0vDu9-rfU4qRpMKclhmYxeUnUbGykm9qYQo9C4ielJOqWVuroNG4xmgbdfrhmFibx4m8DtWe0j30IgyDE7DEPy3KUFJLV-EaeDa9JiSoDCUynSC4kbFaQ-HGfnjcTzf1NEL3P8Uaory6CWoTyruGrSSLv43ZJSm557ozAJ0DmF47XVXr7fSMwLlg==",
     "analisis_financiero": "gAAAAABh_ejemplo_url_encriptada_2_aqui", 
     "kpis_operativos": "gAAAAABh_ejemplo_url_encriptada_3_aqui",
@@ -107,6 +108,7 @@ TITULOS_REPORTES = {
     "2025 03 MAR": "📈 Mar-2025",
     "2025 04 ABR": "📈 Abr-2025",
     "2025 05 MAY": "📈 May-2025",
+    "2025 06 JUN": "📈 Jun-2025",
     "Mes_actual": "📈 Mes actual",
     "analisis_financiero": "💰 Análisis Financiero", 
     "kpis_operativos": "🎯 KPIs Operativos",
@@ -128,6 +130,7 @@ DESCRIPCIONES_REPORTES = {
     "2025 03 MAR": "Métricas de ventas al cierre del mes",
     "2025 04 ABR": "Métricas de ventas al cierre del mes",
     "2025 05 MAY": "Métricas de ventas al cierre del mes",
+    "2025 06 JUN": "Métricas de ventas al cierre del mes",
     "Mes_actual": "Métricas de ventas a la fecha del informe",
     "analisis_financiero": "Estados financieros, flujo de caja y análisis de rentabilidad",
     "kpis_operativos": "Indicadores clave de rendimiento operativo",
@@ -1036,6 +1039,7 @@ def main():
     <div style='text-align: center; color: #666; padding: 1rem;'>
         🔒 <strong>Portal Seguro Power BI</strong> • {config_area['icono']} Área: {area_actual}<br>
         <small>Acceso controlado por área • Reportes protegidos con encriptación avanzada</small>
+        <small>Desarrollado por EBG</small>
     </div>
     """, unsafe_allow_html=True)
 
